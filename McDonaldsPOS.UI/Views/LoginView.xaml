@@ -103,7 +103,7 @@
                                   Foreground="White"
                                   HorizontalAlignment="Center"
                                   VerticalAlignment="Center"
-                                  LetterSpacing="12"/>
+                                  CharacterSpacing="200"/>
                     </Grid>
                 </Border>
 
