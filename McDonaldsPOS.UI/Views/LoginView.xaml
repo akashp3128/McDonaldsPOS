@@ -98,12 +98,11 @@
                                   VerticalAlignment="Center"
                                   Visibility="{Binding Pin, Converter={StaticResource StringNotEmpty}, ConverterParameter=Inverse}"/>
                         <TextBlock Text="{Binding Pin, Converter={StaticResource PinToMask}}"
-                                  FontSize="32"
+                                  FontSize="36"
                                   FontWeight="Bold"
                                   Foreground="White"
                                   HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"
-                                  CharacterSpacing="200"/>
+                                  VerticalAlignment="Center"/>
                     </Grid>
                 </Border>
 

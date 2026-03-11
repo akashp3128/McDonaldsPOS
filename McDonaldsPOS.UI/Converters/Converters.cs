@@ -84,15 +84,16 @@ public class CurrencyConverter : IValueConverter
 }
 
 /// <summary>
-/// Converts PIN string to asterisks for display
+/// Converts PIN string to asterisks for display (with spacing)
 /// </summary>
 public class PinToMaskConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        if (value is string pin)
+        if (value is string pin && pin.Length > 0)
         {
-            return new string('*', pin.Length);
+            // Add spaces between asterisks for better readability
+            return string.Join("  ", Enumerable.Repeat("●", pin.Length));
         }
         return string.Empty;
     }
