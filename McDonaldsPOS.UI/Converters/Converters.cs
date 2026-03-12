@@ -205,3 +205,25 @@ public class BoolToStatusBrushConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+/// <summary>
+/// Converts bool to active/inactive foreground color for nav tabs
+/// </summary>
+public class BoolToNavColorConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is bool isActive)
+        {
+            return isActive
+                ? new SolidColorBrush(Color.Parse("#FFC72C")) // McDonald's yellow for active
+                : new SolidColorBrush(Color.Parse("#888888")); // Gray for inactive
+        }
+        return new SolidColorBrush(Color.Parse("#888888"));
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}

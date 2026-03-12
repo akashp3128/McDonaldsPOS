@@ -16,6 +16,7 @@
 
     <Window.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+        <converters:BoolToNavColorConverter x:Key="BoolToNavColor"/>
     </Window.Resources>
 
     <Window.DataTemplates>
@@ -24,6 +25,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:POSViewModel}">
             <views:POSView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AnalyticsViewModel}">
+            <views:AnalyticsView/>
         </DataTemplate>
     </Window.DataTemplates>
 
@@ -38,6 +42,35 @@
                               FontSize="18" FontWeight="Bold"
                               Foreground="#FFC72C"
                               VerticalAlignment="Center" Margin="8,0,0,0"/>
+                </StackPanel>
+
+                <!-- Navigation Tabs -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center"
+                           IsVisible="{Binding IsLoggedIn}">
+                    <Button Command="{Binding NavigateToPOSCommand}"
+                           Background="Transparent"
+                           Padding="16,8"
+                           CornerRadius="8"
+                           Margin="4,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🍔" FontSize="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="POS" FontSize="14" FontWeight="SemiBold"
+                                      Foreground="{Binding IsOnPOS, Converter={StaticResource BoolToNavColor}}"
+                                      Margin="8,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding NavigateToAnalyticsCommand}"
+                           Background="Transparent"
+                           Padding="16,8"
+                           CornerRadius="8"
+                           Margin="4,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📊" FontSize="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="Analytics" FontSize="14" FontWeight="SemiBold"
+                                      Foreground="{Binding IsOnAnalytics, Converter={StaticResource BoolToNavColor}}"
+                                      Margin="8,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
 
                 <!-- Current User -->

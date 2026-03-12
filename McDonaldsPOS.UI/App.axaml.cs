@@ -66,6 +66,7 @@ public partial class App : Application
         services.AddSingleton<LoginViewModel>();
         services.AddSingleton<POSViewModel>();
         services.AddSingleton<KDSViewModel>();
+        services.AddSingleton<AnalyticsViewModel>();
     }
 
     public void OpenKDSWindow()

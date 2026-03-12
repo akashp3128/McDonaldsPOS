@@ -1,0 +1,287 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:McDonaldsPOS.UI.ViewModels"
+             mc:Ignorable="d"
+             x:Class="McDonaldsPOS.UI.Views.AnalyticsView"
+             x:DataType="vm:AnalyticsViewModel"
+             Background="#1E1E1E">
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header with Date Navigation -->
+        <Grid Grid.Row="0" Margin="0,0,0,24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="📊" FontSize="32" VerticalAlignment="Center"/>
+                <TextBlock Text="Sales Analytics"
+                          FontSize="28" FontWeight="Bold"
+                          Foreground="White"
+                          Margin="12,0,0,0"
+                          VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Date Navigation -->
+            <Border Grid.Column="2" Background="#2D2D2D" CornerRadius="12" Padding="8">
+                <StackPanel Orientation="Horizontal">
+                    <Button Command="{Binding PreviousDayCommand}"
+                           Background="Transparent"
+                           Width="40" Height="40"
+                           CornerRadius="8">
+                        <TextBlock Text="◀" FontSize="16" Foreground="White"/>
+                    </Button>
+                    <Button Command="{Binding GoToTodayCommand}"
+                           Background="Transparent"
+                           MinWidth="120" Height="40"
+                           CornerRadius="8">
+                        <TextBlock Text="{Binding DateDisplay}"
+                                  FontSize="16" FontWeight="SemiBold"
+                                  Foreground="#FFC72C"/>
+                    </Button>
+                    <Button Command="{Binding NextDayCommand}"
+                           Background="Transparent"
+                           Width="40" Height="40"
+                           CornerRadius="8">
+                        <TextBlock Text="▶" FontSize="16" Foreground="White"/>
+                    </Button>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Summary Cards -->
+        <Grid Grid.Row="1" Margin="0,0,0,24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Total Sales -->
+            <Border Grid.Column="0" Background="#2D2D2D" CornerRadius="16" Padding="20" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="💰 Total Sales" FontSize="14" Foreground="Gray"/>
+                    <TextBlock Text="{Binding TotalSales, StringFormat='${0:F2}'}"
+                              FontSize="28" FontWeight="Bold"
+                              Foreground="#4CAF50"
+                              Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Orders -->
+            <Border Grid.Column="1" Background="#2D2D2D" CornerRadius="16" Padding="20" Margin="8,0">
+                <StackPanel>
+                    <TextBlock Text="🧾 Orders" FontSize="14" Foreground="Gray"/>
+                    <TextBlock Text="{Binding OrderCount}"
+                              FontSize="28" FontWeight="Bold"
+                              Foreground="#2196F3"
+                              Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Avg Order -->
+            <Border Grid.Column="2" Background="#2D2D2D" CornerRadius="16" Padding="20" Margin="8,0">
+                <StackPanel>
+                    <TextBlock Text="📈 Avg Order" FontSize="14" Foreground="Gray"/>
+                    <TextBlock Text="{Binding AverageOrderValue, StringFormat='${0:F2}'}"
+                              FontSize="28" FontWeight="Bold"
+                              Foreground="#FF9800"
+                              Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Items Sold -->
+            <Border Grid.Column="3" Background="#2D2D2D" CornerRadius="16" Padding="20" Margin="8,0">
+                <StackPanel>
+                    <TextBlock Text="🍔 Items Sold" FontSize="14" Foreground="Gray"/>
+                    <TextBlock Text="{Binding ItemsSold}"
+                              FontSize="28" FontWeight="Bold"
+                              Foreground="#E91E63"
+                              Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Cash Sales -->
+            <Border Grid.Column="4" Background="#2D2D2D" CornerRadius="16" Padding="20" Margin="8,0">
+                <StackPanel>
+                    <TextBlock Text="💵 Cash" FontSize="14" Foreground="Gray"/>
+                    <TextBlock Text="{Binding CashSales, StringFormat='${0:F2}'}"
+                              FontSize="28" FontWeight="Bold"
+                              Foreground="#8BC34A"
+                              Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Card Sales -->
+            <Border Grid.Column="5" Background="#2D2D2D" CornerRadius="16" Padding="20" Margin="8,0,0,0">
+                <StackPanel>
+                    <TextBlock Text="💳 Card" FontSize="14" Foreground="Gray"/>
+                    <TextBlock Text="{Binding CardSales, StringFormat='${0:F2}'}"
+                              FontSize="28" FontWeight="Bold"
+                              Foreground="#9C27B0"
+                              Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Charts Row -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Hourly Sales Chart -->
+            <Border Grid.Column="0" Background="#2D2D2D" CornerRadius="16" Padding="20" Margin="0,0,12,0">
+                <Grid RowDefinitions="Auto,*">
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,16">
+                        <TextBlock Text="📊 Hourly Sales" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
+                        <Border Background="#3D3D3D" CornerRadius="8" Padding="8,4" Margin="16,0,0,0"
+                               IsVisible="{Binding PeakHourSales, Converter={x:Static ObjectConverters.IsNotNull}}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Peak: " FontSize="12" Foreground="Gray"/>
+                                <TextBlock Text="{Binding PeakHour}" FontSize="12" Foreground="#FFC72C" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                        <ItemsControl ItemsSource="{Binding HourlySales}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="4"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Width="36" VerticalAlignment="Bottom" ToolTip.Tip="{Binding Tooltip}">
+                                        <Border Background="#FFC72C"
+                                               CornerRadius="4,4,0,0"
+                                               Height="{Binding BarHeight}"
+                                               MinHeight="2"
+                                               Margin="2,0"/>
+                                        <TextBlock Text="{Binding HourLabel}"
+                                                  FontSize="10"
+                                                  Foreground="Gray"
+                                                  HorizontalAlignment="Center"
+                                                  Margin="0,4,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <!-- Top Selling Items -->
+            <Border Grid.Column="1" Background="#2D2D2D" CornerRadius="16" Padding="20" Margin="12,0">
+                <Grid RowDefinitions="Auto,*">
+                    <TextBlock Grid.Row="0" Text="🏆 Top Sellers" FontSize="18" FontWeight="SemiBold" Foreground="White" Margin="0,0,0,16"/>
+
+                    <ItemsControl Grid.Row="1" ItemsSource="{Binding TopSellingItems}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#3D3D3D" CornerRadius="8" Padding="12" Margin="0,0,0,8">
+                                    <Grid RowDefinitions="Auto,Auto">
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0"
+                                                      Text="{Binding ItemName}"
+                                                      FontSize="14" FontWeight="SemiBold"
+                                                      Foreground="White"
+                                                      TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Grid.Column="1"
+                                                      Text="{Binding RevenueDisplay}"
+                                                      FontSize="14"
+                                                      Foreground="#4CAF50"/>
+                                        </Grid>
+                                        <Grid Grid.Row="1" Margin="0,8,0,0">
+                                            <Border Background="#555555" CornerRadius="4" Height="8"/>
+                                            <Border Background="#FFC72C" CornerRadius="4" Height="8"
+                                                   Width="{Binding BarWidth}"
+                                                   HorizontalAlignment="Left"/>
+                                        </Grid>
+                                        <TextBlock Grid.Row="1"
+                                                  Text="{Binding QuantitySold, StringFormat='{}{0} sold'}"
+                                                  FontSize="11" Foreground="Gray"
+                                                  HorizontalAlignment="Right"
+                                                  Margin="0,12,0,0"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </Border>
+
+            <!-- Category Breakdown -->
+            <Border Grid.Column="2" Background="#2D2D2D" CornerRadius="16" Padding="20" Margin="12,0,0,0">
+                <Grid RowDefinitions="Auto,*">
+                    <TextBlock Grid.Row="0" Text="📁 By Category" FontSize="18" FontWeight="SemiBold" Foreground="White" Margin="0,0,0,16"/>
+
+                    <ItemsControl Grid.Row="1" ItemsSource="{Binding CategorySales}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#3D3D3D" CornerRadius="8" Padding="12" Margin="0,0,0,8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0"
+                                               Background="{Binding Color}"
+                                               CornerRadius="4"
+                                               Width="8" Height="32"/>
+                                        <StackPanel Grid.Column="1" Margin="12,0">
+                                            <TextBlock Text="{Binding Category}"
+                                                      FontSize="14" FontWeight="SemiBold"
+                                                      Foreground="White"/>
+                                            <TextBlock Text="{Binding SalesDisplay}"
+                                                      FontSize="12" Foreground="Gray"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2"
+                                                  Text="{Binding PercentageDisplay}"
+                                                  FontSize="16" FontWeight="Bold"
+                                                  Foreground="{Binding Color}"
+                                                  VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Loading Overlay -->
+        <Border Grid.RowSpan="3"
+               Background="#80000000"
+               IsVisible="{Binding IsLoading}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar IsIndeterminate="True" Width="200"/>
+                <TextBlock Text="Loading analytics..."
+                          Foreground="White"
+                          HorizontalAlignment="Center"
+                          Margin="0,16,0,0"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

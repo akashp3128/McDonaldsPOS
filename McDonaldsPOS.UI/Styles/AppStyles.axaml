@@ -15,6 +15,44 @@
         </Style.Resources>
     </Style>
 
+    <!-- Global Button Animations -->
+    <Style Selector="Button">
+        <Setter Property="Transitions">
+            <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+                <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.1"/>
+            </Transitions>
+        </Setter>
+        <Setter Property="RenderTransform" Value="scale(1)"/>
+    </Style>
+
+    <Style Selector="Button:pointerover">
+        <Setter Property="RenderTransform" Value="scale(1.02)"/>
+        <Setter Property="Opacity" Value="0.9"/>
+    </Style>
+
+    <Style Selector="Button:pressed">
+        <Setter Property="RenderTransform" Value="scale(0.96)"/>
+        <Setter Property="Opacity" Value="0.8"/>
+    </Style>
+
+    <!-- Border/Card Hover Animations -->
+    <Style Selector="Border.animated">
+        <Setter Property="Transitions">
+            <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15"/>
+                <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                <ThicknessTransition Property="BorderThickness" Duration="0:0:0.1"/>
+            </Transitions>
+        </Setter>
+        <Setter Property="RenderTransform" Value="scale(1)"/>
+    </Style>
+
+    <Style Selector="Border.animated:pointerover">
+        <Setter Property="RenderTransform" Value="scale(1.01)"/>
+    </Style>
+
     <!-- Touch-Friendly Button Base -->
     <Style Selector="Button.touch">
         <Setter Property="Height" Value="60"/>
@@ -58,6 +96,17 @@
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="BoxShadow" Value="0 2 8 0 #40000000"/>
+    </Style>
+
+    <Style Selector="Button.menu-item:pointerover">
+        <Setter Property="BoxShadow" Value="0 4 16 0 #60000000"/>
+        <Setter Property="RenderTransform" Value="scale(1.05)"/>
+    </Style>
+
+    <Style Selector="Button.menu-item:pressed">
+        <Setter Property="BoxShadow" Value="0 1 4 0 #20000000"/>
+        <Setter Property="RenderTransform" Value="scale(0.95)"/>
     </Style>
 
     <!-- PIN Pad Button -->
@@ -107,6 +156,97 @@
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Margin" Value="4"/>
         <Setter Property="Padding" Value="12"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="Border.order-item:pointerover">
+        <Setter Property="Background" Value="#3D3D3D"/>
+    </Style>
+
+    <!-- Category Button Enhanced -->
+    <Style Selector="Button.category:pointerover">
+        <Setter Property="RenderTransform" Value="scale(1.05)"/>
+    </Style>
+
+    <Style Selector="Button.category:pressed">
+        <Setter Property="RenderTransform" Value="scale(0.95)"/>
+    </Style>
+
+    <!-- PIN Pad Enhanced -->
+    <Style Selector="Button.pin-pad:pointerover">
+        <Setter Property="Background" Value="#3D3D3D"/>
+        <Setter Property="RenderTransform" Value="scale(1.05)"/>
+    </Style>
+
+    <Style Selector="Button.pin-pad:pressed">
+        <Setter Property="Background" Value="#4D4D4D"/>
+        <Setter Property="RenderTransform" Value="scale(0.92)"/>
+    </Style>
+
+    <!-- Action Buttons Enhanced -->
+    <Style Selector="Button.action-primary:pointerover">
+        <Setter Property="Background" Value="#E53935"/>
+        <Setter Property="RenderTransform" Value="scale(1.03)"/>
+    </Style>
+
+    <Style Selector="Button.action-primary:pressed">
+        <Setter Property="Background" Value="#C62828"/>
+        <Setter Property="RenderTransform" Value="scale(0.97)"/>
+    </Style>
+
+    <Style Selector="Button.action-secondary:pointerover">
+        <Setter Property="Background" Value="#FFD54F"/>
+        <Setter Property="RenderTransform" Value="scale(1.03)"/>
+    </Style>
+
+    <Style Selector="Button.action-secondary:pressed">
+        <Setter Property="Background" Value="#FFC107"/>
+        <Setter Property="RenderTransform" Value="scale(0.97)"/>
+    </Style>
+
+    <!-- Summary Card Animation -->
+    <Style Selector="Border.summary-card">
+        <Setter Property="Background" Value="#2D2D2D"/>
+        <Setter Property="CornerRadius" Value="16"/>
+        <Setter Property="Padding" Value="20"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+                <BrushTransition Property="Background" Duration="0:0:0.15"/>
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="Border.summary-card:pointerover">
+        <Setter Property="Background" Value="#353535"/>
+        <Setter Property="RenderTransform" Value="scale(1.02)"/>
+    </Style>
+
+    <!-- Dialog Overlay Animation -->
+    <Style Selector="Border.dialog-overlay">
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <!-- Progress Bar Styling -->
+    <Style Selector="ProgressBar">
+        <Setter Property="Foreground" Value="#FFC72C"/>
+        <Setter Property="Background" Value="#3D3D3D"/>
+        <Setter Property="Height" Value="4"/>
+        <Setter Property="CornerRadius" Value="2"/>
+    </Style>
+
+    <!-- Smooth Scroll -->
+    <Style Selector="ScrollViewer">
+        <Setter Property="AllowAutoHide" Value="True"/>
     </Style>
 
 </Styles>
