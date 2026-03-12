@@ -256,7 +256,8 @@ public class OrderService : IOrderService
         order.PaidAt = DateTime.UtcNow;
 
         // If not already in kitchen, send it
-        if (order.Status == OrderStatus.Draft)
+        bool sendingToKitchen = order.Status == OrderStatus.Draft;
+        if (sendingToKitchen)
         {
             order.OrderNumber = await _orderRepository.GetNextOrderNumberAsync();
             order.Status = OrderStatus.Pending;
@@ -276,6 +277,12 @@ public class OrderService : IOrderService
         await _orderRepository.SaveChangesAsync();
 
         var completedOrder = order;
+
+        // Notify KDS if order was just sent to kitchen
+        if (sendingToKitchen)
+        {
+            OrderSentToKitchen?.Invoke(this, completedOrder);
+        }
 
         // Start a new order
         _currentOrder = null;
