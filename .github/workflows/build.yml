@@ -11,14 +11,16 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - os: ubuntu-latest
             artifact_name: McDonaldsPOS-Linux
+            runtime: linux-x64
           - os: macos-latest
             artifact_name: McDonaldsPOS-macOS
+            runtime: osx-x64
           - os: windows-latest
             artifact_name: McDonaldsPOS-Windows
+            runtime: win-x64
 
     runs-on: ${{ matrix.os }}
 
@@ -38,7 +40,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Publish
-      run: dotnet publish McDonaldsPOS.UI/McDonaldsPOS.UI.csproj -c Release -o ./publish --self-contained false
+      run: dotnet publish McDonaldsPOS.UI/McDonaldsPOS.UI.csproj -c Release -o ./publish -r ${{ matrix.runtime }} --self-contained true
 
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v4
