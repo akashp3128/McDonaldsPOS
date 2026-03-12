@@ -1,5 +1,5 @@
 using System.Collections.ObjectModel;
-using System.Windows.Threading;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using McDonaldsPOS.Core.Enums;
