@@ -35,12 +35,14 @@ public class Order
     public virtual ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
 
     /// <summary>
-    /// Recalculate order totals from items
+    /// Recalculate order totals from items (excludes voided items)
     /// </summary>
     public void RecalculateTotals()
     {
-        Subtotal = Items.Sum(i => i.LineTotal);
-        TaxAmount = Math.Round(Subtotal * TaxRate, 2);
-        Total = Subtotal + TaxAmount;
+        // Only sum non-voided items
+        Subtotal = Items.Where(i => !i.IsVoided).Sum(i => i.LineTotal);
+        // Use banker's rounding (MidpointRounding.ToEven) for accurate currency calculations
+        TaxAmount = Math.Round(Subtotal * TaxRate, 2, MidpointRounding.ToEven);
+        Total = Math.Round(Subtotal + TaxAmount, 2, MidpointRounding.ToEven);
     }
 }

@@ -406,85 +406,122 @@
                    Padding="32"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
-                   Width="500">
-                <StackPanel>
-                    <TextBlock Text="Payment"
-                              FontSize="28" FontWeight="Bold"
-                              Foreground="White"
-                              HorizontalAlignment="Center"
-                              Margin="0,0,0,8"/>
+                   Width="600">
+                <Grid ColumnDefinitions="*,*">
+                    <!-- Left Side: Card Payment + Total -->
+                    <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                        <TextBlock Text="Payment"
+                                  FontSize="28" FontWeight="Bold"
+                                  Foreground="White"
+                                  HorizontalAlignment="Center"
+                                  Margin="0,0,0,8"/>
 
-                    <!-- Total Display -->
-                    <Border Background="#1A1A1A" CornerRadius="12" Padding="24" Margin="0,16">
-                        <StackPanel>
-                            <TextBlock Text="Total Due" FontSize="16" Foreground="Gray" HorizontalAlignment="Center"/>
-                            <TextBlock Text="{Binding Total, Converter={StaticResource Currency}}"
-                                      FontSize="48" FontWeight="Bold"
-                                      Foreground="#FFC72C"
-                                      HorizontalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
+                        <!-- Total Display -->
+                        <Border Background="#1A1A1A" CornerRadius="12" Padding="24" Margin="0,16">
+                            <StackPanel>
+                                <TextBlock Text="Total Due" FontSize="16" Foreground="Gray" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding Total, Converter={StaticResource Currency}}"
+                                          FontSize="48" FontWeight="Bold"
+                                          Foreground="#FFC72C"
+                                          HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
 
-                    <!-- Payment Methods -->
-                    <Grid ColumnDefinitions="*,*" Margin="0,8">
-                        <Button Grid.Column="0"
-                               Classes="action-secondary"
+                        <!-- Card Payment Button -->
+                        <Button Classes="action-secondary"
                                Height="80"
+                               HorizontalAlignment="Stretch"
                                Command="{Binding PayCardCommand}">
                             <StackPanel>
-                                <TextBlock Text="💳" FontSize="28"/>
-                                <TextBlock Text="CARD" FontWeight="Bold" Margin="0,4,0,0"/>
+                                <TextBlock Text="💳" FontSize="28" HorizontalAlignment="Center"/>
+                                <TextBlock Text="PAY WITH CARD" FontWeight="Bold" Margin="0,4,0,0" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
 
-                        <Border Grid.Column="1" Background="#404040" CornerRadius="8" Margin="4" Padding="8">
-                            <StackPanel>
-                                <TextBlock Text="CASH" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                        <!-- Cancel Button -->
+                        <Button Content="CANCEL"
+                               Background="Transparent" Foreground="Gray"
+                               BorderBrush="Gray" BorderThickness="1"
+                               Height="44" CornerRadius="8"
+                               Margin="0,16,0,0"
+                               Command="{Binding CancelPaymentCommand}"/>
+                    </StackPanel>
 
-                                <!-- Amount Display -->
-                                <Border Background="#1A1A1A" CornerRadius="4" Padding="8" Margin="0,0,0,8">
-                                    <TextBlock Text="{Binding TenderedAmount, StringFormat=${0}}"
-                                              FontSize="20" FontWeight="Bold"
+                    <!-- Right Side: Cash Payment with Numpad -->
+                    <Border Grid.Column="1" Background="#404040" CornerRadius="12" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="💵 CASH PAYMENT" FontWeight="Bold" FontSize="16" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+
+                            <!-- Amount Display -->
+                            <Border Background="#1A1A1A" CornerRadius="8" Padding="12" Margin="0,0,0,8">
+                                <TextBlock Text="{Binding TenderedAmountDisplay}"
+                                          FontSize="28" FontWeight="Bold"
+                                          Foreground="White"
+                                          HorizontalAlignment="Center"/>
+                            </Border>
+
+                            <!-- Error Message -->
+                            <Border Background="#D32F2F" CornerRadius="4" Padding="8" Margin="0,0,0,8"
+                                   IsVisible="{Binding HasPaymentError}">
+                                <TextBlock Text="{Binding PaymentError}"
+                                          FontSize="12" FontWeight="SemiBold"
+                                          Foreground="White"
+                                          HorizontalAlignment="Center"
+                                          TextWrapping="Wrap"/>
+                            </Border>
+
+                            <!-- Quick Amount Buttons -->
+                            <UniformGrid Columns="4" Margin="0,0,0,8">
+                                <Button Content="$10" Height="36" FontSize="12" Margin="2" Command="{Binding QuickTenderCommand}" CommandParameter="10"/>
+                                <Button Content="$20" Height="36" FontSize="12" Margin="2" Command="{Binding QuickTenderCommand}" CommandParameter="20"/>
+                                <Button Content="$50" Height="36" FontSize="12" Margin="2" Command="{Binding QuickTenderCommand}" CommandParameter="50"/>
+                                <Button Content="$100" Height="36" FontSize="12" Margin="2" Command="{Binding QuickTenderCommand}" CommandParameter="100"/>
+                            </UniformGrid>
+
+                            <!-- Numpad -->
+                            <UniformGrid Columns="3" Rows="4">
+                                <Button Classes="pin-pad" Content="1" Command="{Binding AppendTenderAmountCommand}" CommandParameter="1"/>
+                                <Button Classes="pin-pad" Content="2" Command="{Binding AppendTenderAmountCommand}" CommandParameter="2"/>
+                                <Button Classes="pin-pad" Content="3" Command="{Binding AppendTenderAmountCommand}" CommandParameter="3"/>
+                                <Button Classes="pin-pad" Content="4" Command="{Binding AppendTenderAmountCommand}" CommandParameter="4"/>
+                                <Button Classes="pin-pad" Content="5" Command="{Binding AppendTenderAmountCommand}" CommandParameter="5"/>
+                                <Button Classes="pin-pad" Content="6" Command="{Binding AppendTenderAmountCommand}" CommandParameter="6"/>
+                                <Button Classes="pin-pad" Content="7" Command="{Binding AppendTenderAmountCommand}" CommandParameter="7"/>
+                                <Button Classes="pin-pad" Content="8" Command="{Binding AppendTenderAmountCommand}" CommandParameter="8"/>
+                                <Button Classes="pin-pad" Content="9" Command="{Binding AppendTenderAmountCommand}" CommandParameter="9"/>
+                                <Button Classes="pin-pad" Content="." FontSize="28" Command="{Binding AppendTenderAmountCommand}" CommandParameter="."/>
+                                <Button Classes="pin-pad" Content="0" Command="{Binding AppendTenderAmountCommand}" CommandParameter="0"/>
+                                <Button Classes="pin-pad" Content="⌫" FontSize="20" Command="{Binding BackspaceTenderAmountCommand}"/>
+                            </UniformGrid>
+
+                            <!-- Clear Button -->
+                            <Button Content="CLEAR" Height="36" Margin="0,8,0,0"
+                                   Background="Transparent" Foreground="Gray"
+                                   BorderBrush="Gray" BorderThickness="1"
+                                   Command="{Binding ClearTenderAmountCommand}"/>
+
+                            <!-- Change Display -->
+                            <Border Background="#4CAF50" CornerRadius="8" Padding="12" Margin="0,8,0,0"
+                                   IsVisible="{Binding ChangeAmount, Converter={StaticResource CountToVisibility}}">
+                                <StackPanel>
+                                    <TextBlock Text="Change Due" FontSize="12" Foreground="White" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ChangeAmount, Converter={StaticResource Currency}}"
+                                              FontSize="24" FontWeight="Bold"
                                               Foreground="White"
                                               HorizontalAlignment="Center"/>
-                                </Border>
+                                </StackPanel>
+                            </Border>
 
-                                <!-- Quick Amount Buttons -->
-                                <UniformGrid Columns="2" Rows="2">
-                                    <Button Content="$10" Height="36" FontSize="12" Margin="2" Command="{Binding QuickTenderCommand}" CommandParameter="10"/>
-                                    <Button Content="$20" Height="36" FontSize="12" Margin="2" Command="{Binding QuickTenderCommand}" CommandParameter="20"/>
-                                    <Button Content="$50" Height="36" FontSize="12" Margin="2" Command="{Binding QuickTenderCommand}" CommandParameter="50"/>
-                                    <Button Content="$100" Height="36" FontSize="12" Margin="2" Command="{Binding QuickTenderCommand}" CommandParameter="100"/>
-                                </UniformGrid>
-
-                                <!-- Change Display -->
-                                <Border Background="#4CAF50" CornerRadius="4" Padding="8" Margin="0,8,0,0"
-                                       IsVisible="{Binding ChangeAmount, Converter={StaticResource CountToVisibility}}">
-                                    <StackPanel>
-                                        <TextBlock Text="Change" FontSize="12" Foreground="White" HorizontalAlignment="Center"/>
-                                        <TextBlock Text="{Binding ChangeAmount, Converter={StaticResource Currency}}"
-                                                  FontSize="18" FontWeight="Bold"
-                                                  Foreground="White"
-                                                  HorizontalAlignment="Center"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <Button Classes="action-primary"
-                                       Content="PAY CASH"
-                                       Height="44"
-                                       Margin="0,8,0,0"
-                                       Command="{Binding PayCashCommand}"/>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-
-                    <Button Content="CANCEL"
-                           Background="Transparent" Foreground="Gray"
-                           BorderBrush="Gray" BorderThickness="1"
-                           Height="44" CornerRadius="8"
-                           Margin="0,16,0,0"
-                           Command="{Binding CancelPaymentCommand}"/>
-                </StackPanel>
+                            <!-- Pay Cash Button -->
+                            <Button Classes="action-primary"
+                                   Content="PAY CASH"
+                                   Height="56"
+                                   FontSize="18"
+                                   Margin="0,12,0,0"
+                                   Command="{Binding PayCashCommand}"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
             </Border>
         </Border>
 

@@ -81,10 +81,19 @@ public partial class POSViewModel : ViewModelBase
     private string _tenderedAmount = string.Empty;
 
     [ObservableProperty]
+    private string _tenderedAmountDisplay = "$0.00";
+
+    [ObservableProperty]
     private decimal _changeAmount;
 
     [ObservableProperty]
     private bool _isCardPayment;
+
+    [ObservableProperty]
+    private string _paymentError = string.Empty;
+
+    [ObservableProperty]
+    private bool _hasPaymentError;
 
     // Void state
     [ObservableProperty]
@@ -391,46 +400,131 @@ public partial class POSViewModel : ViewModelBase
         if (!OrderItems.Any()) return;
 
         TenderedAmount = string.Empty;
+        TenderedAmountDisplay = "$0.00";
         ChangeAmount = 0;
         IsCardPayment = false;
+        PaymentError = string.Empty;
+        HasPaymentError = false;
         ShowPaymentDialog = true;
     }
 
     [RelayCommand]
     private void AppendTenderAmount(string digit)
     {
-        TenderedAmount += digit;
+        // Handle decimal point
+        if (digit == ".")
+        {
+            if (TenderedAmount.Contains('.')) return; // Only one decimal allowed
+            if (string.IsNullOrEmpty(TenderedAmount))
+                TenderedAmount = "0.";
+            else
+                TenderedAmount += ".";
+        }
+        else
+        {
+            // Limit decimal places to 2
+            var decimalIndex = TenderedAmount.IndexOf('.');
+            if (decimalIndex >= 0 && TenderedAmount.Length - decimalIndex > 2)
+                return; // Already have 2 decimal places
+
+            TenderedAmount += digit;
+        }
+
+        UpdateTenderedDisplay();
         CalculateChange();
+        ClearPaymentError();
+    }
+
+    [RelayCommand]
+    private void BackspaceTenderAmount()
+    {
+        if (!string.IsNullOrEmpty(TenderedAmount))
+        {
+            TenderedAmount = TenderedAmount[..^1];
+            UpdateTenderedDisplay();
+            CalculateChange();
+            ClearPaymentError();
+        }
     }
 
     [RelayCommand]
     private void ClearTenderAmount()
     {
         TenderedAmount = string.Empty;
+        TenderedAmountDisplay = "$0.00";
         ChangeAmount = 0;
+        ClearPaymentError();
     }
 
     [RelayCommand]
     private void QuickTender(string amount)
     {
         TenderedAmount = amount;
+        UpdateTenderedDisplay();
         CalculateChange();
+        ClearPaymentError();
+    }
+
+    private void UpdateTenderedDisplay()
+    {
+        if (decimal.TryParse(TenderedAmount, out var amount))
+        {
+            TenderedAmountDisplay = $"${amount:F2}";
+        }
+        else if (string.IsNullOrEmpty(TenderedAmount))
+        {
+            TenderedAmountDisplay = "$0.00";
+        }
+        else
+        {
+            // Handle partial input like "5."
+            TenderedAmountDisplay = $"${TenderedAmount}";
+        }
     }
 
     private void CalculateChange()
     {
         if (decimal.TryParse(TenderedAmount, out var tendered))
         {
-            ChangeAmount = Math.Max(0, tendered - Total);
+            ChangeAmount = Math.Round(Math.Max(0, tendered - Total), 2, MidpointRounding.ToEven);
         }
+        else
+        {
+            ChangeAmount = 0;
+        }
+    }
+
+    private void ClearPaymentError()
+    {
+        PaymentError = string.Empty;
+        HasPaymentError = false;
+    }
+
+    private void SetPaymentError(string message)
+    {
+        PaymentError = message;
+        HasPaymentError = true;
     }
 
     [RelayCommand]
     private async Task PayCash()
     {
-        if (!decimal.TryParse(TenderedAmount, out var tendered) || tendered < Total)
+        if (string.IsNullOrEmpty(TenderedAmount))
         {
-            // Show error
+            SetPaymentError("Please enter an amount");
+            return;
+        }
+
+        if (!decimal.TryParse(TenderedAmount, out var tendered))
+        {
+            SetPaymentError("Invalid amount entered");
+            return;
+        }
+
+        if (tendered < Total)
+        {
+            var shortfall = Total - tendered;
+            SetPaymentError($"Insufficient payment. Short ${shortfall:F2}");
             return;
         }
 

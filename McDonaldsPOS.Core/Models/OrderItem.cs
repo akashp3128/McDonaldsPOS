@@ -17,7 +17,7 @@ public class OrderItem
     public string ItemName { get; set; } = string.Empty; // Snapshot at time of order
     public int Quantity { get; set; } = 1;
     public decimal UnitPrice { get; set; }
-    public decimal LineTotal => UnitPrice * Quantity + ModifierTotal;
+    public decimal LineTotal => IsVoided ? 0m : Math.Round(UnitPrice * Quantity + ModifierTotal, 2, MidpointRounding.ToEven);
 
     public ItemSize Size { get; set; } = ItemSize.None;
     public bool IsCombo { get; set; } // Part of a meal deal
