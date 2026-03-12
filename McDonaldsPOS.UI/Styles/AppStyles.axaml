@@ -96,17 +96,16 @@
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="CornerRadius" Value="12"/>
-        <Setter Property="BoxShadow" Value="0 2 8 0 #40000000"/>
     </Style>
 
     <Style Selector="Button.menu-item:pointerover">
-        <Setter Property="BoxShadow" Value="0 4 16 0 #60000000"/>
         <Setter Property="RenderTransform" Value="scale(1.05)"/>
+        <Setter Property="Opacity" Value="0.95"/>
     </Style>
 
     <Style Selector="Button.menu-item:pressed">
-        <Setter Property="BoxShadow" Value="0 1 4 0 #20000000"/>
         <Setter Property="RenderTransform" Value="scale(0.95)"/>
+        <Setter Property="Opacity" Value="0.85"/>
     </Style>
 
     <!-- PIN Pad Button -->
