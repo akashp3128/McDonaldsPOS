@@ -6,7 +6,6 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>Assets\pos-icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,10 +19,6 @@
     <ProjectReference Include="..\McDonaldsPOS.Core\McDonaldsPOS.Core.csproj" />
     <ProjectReference Include="..\McDonaldsPOS.Data\McDonaldsPOS.Data.csproj" />
     <ProjectReference Include="..\McDonaldsPOS.Services\McDonaldsPOS.Services.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Assets\**\*" />
   </ItemGroup>
 
 </Project>
