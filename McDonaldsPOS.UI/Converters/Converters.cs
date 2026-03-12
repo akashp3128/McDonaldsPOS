@@ -1,31 +1,28 @@
 using System.Globalization;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Media;
+using Avalonia.Data.Converters;
+using Avalonia.Media;
 
 namespace McDonaldsPOS.UI.Converters;
 
 /// <summary>
-/// Converts a boolean to Visibility (true = Visible, false = Collapsed)
+/// Converts a boolean to visibility (true = visible, false = collapsed)
 /// </summary>
 public class BoolToVisibilityConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool boolValue)
         {
-            // Check for inverse parameter
             if (parameter?.ToString() == "Inverse")
                 boolValue = !boolValue;
-
-            return boolValue ? Visibility.Visible : Visibility.Collapsed;
+            return boolValue;
         }
-        return Visibility.Collapsed;
+        return false;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        return value is Visibility.Visible;
+        return value is true;
     }
 }
 
@@ -34,14 +31,13 @@ public class BoolToVisibilityConverter : IValueConverter
 /// </summary>
 public class HexColorToBrushConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is string hex && !string.IsNullOrEmpty(hex))
         {
             try
             {
-                var color = (Color)ColorConverter.ConvertFromString(hex);
-                return new SolidColorBrush(color);
+                return new SolidColorBrush(Color.Parse(hex));
             }
             catch
             {
@@ -51,7 +47,7 @@ public class HexColorToBrushConverter : IValueConverter
         return new SolidColorBrush(Colors.Gray);
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }
@@ -62,7 +58,7 @@ public class HexColorToBrushConverter : IValueConverter
 /// </summary>
 public class CurrencyConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is decimal decimalValue)
         {
@@ -71,7 +67,7 @@ public class CurrencyConverter : IValueConverter
         return "$0.00";
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is string str)
         {
@@ -84,41 +80,43 @@ public class CurrencyConverter : IValueConverter
 }
 
 /// <summary>
-/// Converts PIN string to asterisks for display (with spacing)
+/// Converts PIN string to masked display (with spacing)
 /// </summary>
 public class PinToMaskConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is string pin && pin.Length > 0)
         {
-            // Add spaces between asterisks for better readability
             return string.Join("  ", Enumerable.Repeat("●", pin.Length));
         }
         return string.Empty;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }
 }
 
 /// <summary>
-/// Converts count to visibility (> 0 = Visible)
+/// Converts count to visibility (> 0 = visible)
 /// </summary>
 public class CountToVisibilityConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is int count)
         {
-            return count > 0 ? Visibility.Visible : Visibility.Collapsed;
+            bool isVisible = count > 0;
+            if (parameter?.ToString() == "Inverse")
+                isVisible = !isVisible;
+            return isVisible;
         }
-        return Visibility.Collapsed;
+        return false;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }
@@ -129,7 +127,7 @@ public class CountToVisibilityConverter : IValueConverter
 /// </summary>
 public class InverseBoolConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool boolValue)
         {
@@ -138,7 +136,7 @@ public class InverseBoolConverter : IValueConverter
         return true;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool boolValue)
         {
@@ -153,12 +151,12 @@ public class InverseBoolConverter : IValueConverter
 /// </summary>
 public class StringNotEmptyConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         return !string.IsNullOrEmpty(value as string);
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }
@@ -169,19 +167,18 @@ public class StringNotEmptyConverter : IValueConverter
 /// </summary>
 public class BoolToSelectionBrushConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool isSelected && isSelected)
         {
-            // For error state, show red; for success, show green
             if (parameter?.ToString() == "Error")
-                return new SolidColorBrush(Color.FromRgb(211, 47, 47)); // Red
-            return new SolidColorBrush(Color.FromRgb(76, 175, 80)); // Green
+                return new SolidColorBrush(Color.Parse("#D32F2F")); // Red
+            return new SolidColorBrush(Color.Parse("#4CAF50")); // Green
         }
-        return new SolidColorBrush(Color.FromRgb(66, 66, 66)); // Dark gray
+        return new SolidColorBrush(Color.Parse("#424242")); // Dark gray
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }
@@ -192,18 +189,18 @@ public class BoolToSelectionBrushConverter : IValueConverter
 /// </summary>
 public class BoolToStatusBrushConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool isError)
         {
             return isError
-                ? new SolidColorBrush(Color.FromRgb(211, 47, 47)) // Red for error
-                : new SolidColorBrush(Color.FromRgb(76, 175, 80)); // Green for success
+                ? new SolidColorBrush(Color.Parse("#D32F2F")) // Red for error
+                : new SolidColorBrush(Color.Parse("#4CAF50")); // Green for success
         }
-        return new SolidColorBrush(Color.FromRgb(100, 100, 100)); // Gray
+        return new SolidColorBrush(Color.Parse("#646464")); // Gray
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }

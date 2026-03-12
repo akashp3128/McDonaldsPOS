@@ -1,21 +1,21 @@
-<Window x:Class="McDonaldsPOS.UI.Views.KDSWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:vm="clr-namespace:McDonaldsPOS.UI.ViewModels"
+        xmlns:converters="clr-namespace:McDonaldsPOS.UI.Converters"
         mc:Ignorable="d"
+        x:Class="McDonaldsPOS.UI.Views.KDSWindow"
+        x:DataType="vm:KDSViewModel"
         Title="Kitchen Display System (KDS)"
-        Height="800" Width="1400"
-        MinHeight="600" MinWidth="1000"
-        Background="{StaticResource DarkBackground}"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        TextElement.FontWeight="Regular"
-        TextElement.FontSize="14"
-        d:DataContext="{d:DesignInstance Type=vm:KDSViewModel}"
-        Loaded="Window_Loaded"
-        Closing="Window_Closing">
+        Width="1400" Height="800"
+        MinWidth="1000" MinHeight="600"
+        Background="#1E1E1E">
+
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+        <converters:BoolToSelectionBrushConverter x:Key="BoolToSelectionBrush"/>
+    </Window.Resources>
 
     <Grid Margin="16">
         <Grid.RowDefinitions>
@@ -24,13 +24,18 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Border Grid.Row="0" Background="{StaticResource CardBackground}" CornerRadius="12" Padding="24" Margin="0,0,0,16">
+        <Border Grid.Row="0" Background="#2D2D2D" CornerRadius="12" Padding="24" Margin="0,0,0,16">
             <Grid>
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="ChefHat"
-                                            Width="36" Height="36"
-                                            Foreground="{StaticResource McDonaldsYellow}"
-                                            VerticalAlignment="Center"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Text="👨‍🍳"
+                              FontSize="36"
+                              VerticalAlignment="Center"/>
                     <TextBlock Text="Kitchen Display System"
                               FontSize="28" FontWeight="Bold"
                               Foreground="White"
@@ -38,7 +43,7 @@
                               Margin="12,0,0,0"/>
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
                     <!-- Status Counts -->
                     <Border Background="#FFC107" CornerRadius="8" Padding="16,8" Margin="8,0">
                         <StackPanel Orientation="Horizontal">
@@ -59,12 +64,13 @@
                         </StackPanel>
                     </Border>
 
-                    <Button Style="{StaticResource MaterialDesignIconButton}"
-                           Width="48" Height="48"
+                    <Button Width="48" Height="48"
                            Margin="16,0,0,0"
                            Command="{Binding RefreshOrdersCommand}"
-                           ToolTip="Refresh">
-                        <materialDesign:PackIcon Kind="Refresh" Width="28" Height="28"/>
+                           Background="#3D3D3D"
+                           CornerRadius="24"
+                           ToolTip.Tip="Refresh">
+                        <TextBlock Text="🔄" FontSize="24"/>
                     </Button>
                 </StackPanel>
             </Grid>
@@ -79,34 +85,27 @@
             </Grid.ColumnDefinitions>
 
             <!-- Pending Orders -->
-            <Border Grid.Column="0" Background="{StaticResource CardBackground}" CornerRadius="12" Margin="0,0,8,0">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <Border Grid.Row="0" Background="#FFC107" Padding="16">
+            <Border Grid.Column="0" Background="#2D2D2D" CornerRadius="12" Margin="0,0,8,0">
+                <Grid RowDefinitions="Auto,*">
+                    <Border Grid.Row="0" Background="#FFC107" Padding="16" CornerRadius="12,12,0,0">
                         <TextBlock Text="PENDING" FontSize="20" FontWeight="Bold" Foreground="Black" HorizontalAlignment="Center"/>
                     </Border>
 
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="8">
-                        <ItemsControl ItemsSource="{Binding PendingOrders}">
+                        <ItemsControl ItemsSource="{Binding PendingOrders}" x:Name="PendingOrdersControl">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Background="#3D3D3D" CornerRadius="12" Margin="4" Padding="16">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="*"/>
-                                                <RowDefinition Height="Auto"/>
-                                            </Grid.RowDefinitions>
-
+                                        <Grid RowDefinitions="Auto,*,Auto">
                                             <!-- Order Header -->
                                             <Grid Grid.Row="0">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <Border Background="{StaticResource McDonaldsYellow}" CornerRadius="8" Padding="12,4">
-                                                        <TextBlock Text="{Binding OrderNumber, StringFormat=#\{0\}}"
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                                    <Border Background="#FFC72C" CornerRadius="8" Padding="12,4">
+                                                        <TextBlock Text="{Binding OrderNumber, StringFormat='#{0}'}"
                                                                   FontSize="24" FontWeight="Bold" Foreground="Black"/>
                                                     </Border>
                                                     <TextBlock Text="{Binding OrderTime}"
@@ -114,9 +113,9 @@
                                                               VerticalAlignment="Center"
                                                               Margin="12,0,0,0"/>
                                                 </StackPanel>
-                                                <Border Background="{Binding IsOverdue, Converter={StaticResource BoolToSelectionBrush}}"
-                                                       CornerRadius="4" Padding="8,4"
-                                                       HorizontalAlignment="Right">
+                                                <Border Grid.Column="1"
+                                                       Background="{Binding IsOverdue, Converter={StaticResource BoolToSelectionBrush}}"
+                                                       CornerRadius="4" Padding="8,4">
                                                     <TextBlock Text="{Binding ElapsedDisplay}"
                                                               FontSize="12" FontWeight="Bold" Foreground="White"/>
                                                 </Border>
@@ -137,28 +136,29 @@
                                                                           FontSize="16" Foreground="White"
                                                                           Margin="8,0,0,0"
                                                                           VerticalAlignment="Center"/>
-                                                                <Border Background="{StaticResource McDonaldsYellow}"
+                                                                <Border Background="#FFC72C"
                                                                        CornerRadius="4" Padding="4,2"
                                                                        Margin="8,0,0,0"
-                                                                       Visibility="{Binding IsCombo, Converter={StaticResource BoolToVisibility}}">
+                                                                       IsVisible="{Binding IsCombo}">
                                                                     <TextBlock Text="MEAL" FontSize="10" FontWeight="Bold" Foreground="Black"/>
                                                                 </Border>
                                                             </StackPanel>
                                                             <TextBlock Text="{Binding Modifiers}"
                                                                       FontSize="12" Foreground="#FFA726"
                                                                       Margin="36,2,0,0"
-                                                                      Visibility="{Binding HasModifiers, Converter={StaticResource BoolToVisibility}}"/>
+                                                                      IsVisible="{Binding HasModifiers}"/>
                                                         </StackPanel>
                                                     </DataTemplate>
                                                 </ItemsControl.ItemTemplate>
                                             </ItemsControl>
 
-                                            <!-- Bump Button -->
+                                            <!-- Start Button -->
                                             <Button Grid.Row="2"
-                                                   Style="{StaticResource ActionButtonSecondary}"
+                                                   Classes="kds-action"
+                                                   Background="#FFC107"
                                                    Content="START"
                                                    Height="50"
-                                                   Command="{Binding DataContext.StartOrderCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                   Command="{Binding #PendingOrdersControl.((vm:KDSViewModel)DataContext).StartOrderCommand}"
                                                    CommandParameter="{Binding}"/>
                                         </Grid>
                                     </Border>
@@ -170,35 +170,28 @@
             </Border>
 
             <!-- In Prep Orders -->
-            <Border Grid.Column="1" Background="{StaticResource CardBackground}" CornerRadius="12" Margin="8,0">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <Border Grid.Row="0" Background="#2196F3" Padding="16">
+            <Border Grid.Column="1" Background="#2D2D2D" CornerRadius="12" Margin="8,0">
+                <Grid RowDefinitions="Auto,*">
+                    <Border Grid.Row="0" Background="#2196F3" Padding="16" CornerRadius="12,12,0,0">
                         <TextBlock Text="IN PREP" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
                     </Border>
 
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="8">
-                        <ItemsControl ItemsSource="{Binding InPrepOrders}">
+                        <ItemsControl ItemsSource="{Binding InPrepOrders}" x:Name="InPrepOrdersControl">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Background="#3D3D3D" CornerRadius="12" Margin="4" Padding="16"
                                            BorderBrush="#2196F3" BorderThickness="2">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="*"/>
-                                                <RowDefinition Height="Auto"/>
-                                            </Grid.RowDefinitions>
-
+                                        <Grid RowDefinitions="Auto,*,Auto">
                                             <!-- Order Header -->
                                             <Grid Grid.Row="0">
-                                                <StackPanel Orientation="Horizontal">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Column="0" Orientation="Horizontal">
                                                     <Border Background="#2196F3" CornerRadius="8" Padding="12,4">
-                                                        <TextBlock Text="{Binding OrderNumber, StringFormat=#\{0\}}"
+                                                        <TextBlock Text="{Binding OrderNumber, StringFormat='#{0}'}"
                                                                   FontSize="24" FontWeight="Bold" Foreground="White"/>
                                                     </Border>
                                                     <TextBlock Text="{Binding OrderTime}"
@@ -206,9 +199,9 @@
                                                               VerticalAlignment="Center"
                                                               Margin="12,0,0,0"/>
                                                 </StackPanel>
-                                                <Border Background="{Binding IsOverdue, Converter={StaticResource BoolToSelectionBrush}}"
-                                                       CornerRadius="4" Padding="8,4"
-                                                       HorizontalAlignment="Right">
+                                                <Border Grid.Column="1"
+                                                       Background="{Binding IsOverdue, Converter={StaticResource BoolToSelectionBrush}}"
+                                                       CornerRadius="4" Padding="8,4">
                                                     <TextBlock Text="{Binding ElapsedDisplay}"
                                                               FontSize="12" FontWeight="Bold" Foreground="White"/>
                                                 </Border>
@@ -233,19 +226,19 @@
                                                             <TextBlock Text="{Binding Modifiers}"
                                                                       FontSize="12" Foreground="#FFA726"
                                                                       Margin="36,2,0,0"
-                                                                      Visibility="{Binding HasModifiers, Converter={StaticResource BoolToVisibility}}"/>
+                                                                      IsVisible="{Binding HasModifiers}"/>
                                                         </StackPanel>
                                                     </DataTemplate>
                                                 </ItemsControl.ItemTemplate>
                                             </ItemsControl>
 
-                                            <!-- Bump Button -->
+                                            <!-- Ready Button -->
                                             <Button Grid.Row="2"
-                                                   Style="{StaticResource ActionButtonPrimary}"
+                                                   Classes="kds-action"
                                                    Background="#4CAF50"
                                                    Content="READY"
                                                    Height="50"
-                                                   Command="{Binding DataContext.BumpOrderCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                   Command="{Binding #InPrepOrdersControl.((vm:KDSViewModel)DataContext).BumpOrderCommand}"
                                                    CommandParameter="{Binding}"/>
                                         </Grid>
                                     </Border>
@@ -257,38 +250,25 @@
             </Border>
 
             <!-- Ready Orders -->
-            <Border Grid.Column="2" Background="{StaticResource CardBackground}" CornerRadius="12" Margin="8,0,0,0">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <Border Grid.Row="0" Background="#4CAF50" Padding="16">
+            <Border Grid.Column="2" Background="#2D2D2D" CornerRadius="12" Margin="8,0,0,0">
+                <Grid RowDefinitions="Auto,*">
+                    <Border Grid.Row="0" Background="#4CAF50" Padding="16" CornerRadius="12,12,0,0">
                         <TextBlock Text="READY" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
                     </Border>
 
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="8">
-                        <ItemsControl ItemsSource="{Binding ReadyOrders}">
+                        <ItemsControl ItemsSource="{Binding ReadyOrders}" x:Name="ReadyOrdersControl">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Background="#3D3D3D" CornerRadius="12" Margin="4" Padding="16"
                                            BorderBrush="#4CAF50" BorderThickness="3">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="*"/>
-                                                <RowDefinition Height="Auto"/>
-                                            </Grid.RowDefinitions>
-
+                                        <Grid RowDefinitions="Auto,*,Auto">
                                             <!-- Order Header -->
-                                            <Grid Grid.Row="0">
-                                                <Border Background="#4CAF50" CornerRadius="8" Padding="16,8">
-                                                    <TextBlock Text="{Binding OrderNumber, StringFormat=#\{0\}}"
-                                                              FontSize="32" FontWeight="Bold" Foreground="White"
-                                                              HorizontalAlignment="Center"/>
-                                                </Border>
-                                            </Grid>
+                                            <Border Grid.Row="0" Background="#4CAF50" CornerRadius="8" Padding="16,8" HorizontalAlignment="Center">
+                                                <TextBlock Text="{Binding OrderNumber, StringFormat='#{0}'}"
+                                                          FontSize="32" FontWeight="Bold" Foreground="White"
+                                                          HorizontalAlignment="Center"/>
+                                            </Border>
 
                                             <!-- Order Items -->
                                             <ItemsControl Grid.Row="1" ItemsSource="{Binding Items}" Margin="0,12">
@@ -313,12 +293,12 @@
 
                                             <!-- Complete Button -->
                                             <Button Grid.Row="2"
-                                                   Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                   Classes="kds-action-outline"
                                                    Content="COMPLETE"
                                                    Foreground="#4CAF50"
                                                    BorderBrush="#4CAF50"
                                                    Height="50"
-                                                   Command="{Binding DataContext.CompleteOrderCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                   Command="{Binding #ReadyOrdersControl.((vm:KDSViewModel)DataContext).CompleteOrderCommand}"
                                                    CommandParameter="{Binding}"/>
                                         </Grid>
                                     </Border>
@@ -330,4 +310,22 @@
             </Border>
         </Grid>
     </Grid>
+
+    <Window.Styles>
+        <Style Selector="Button.kds-action">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+        <Style Selector="Button.kds-action-outline">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+    </Window.Styles>
 </Window>

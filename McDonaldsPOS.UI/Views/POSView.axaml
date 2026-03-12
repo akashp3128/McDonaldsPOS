@@ -1,28 +1,26 @@
-<UserControl x:Class="McDonaldsPOS.UI.Views.POSView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:McDonaldsPOS.UI.ViewModels"
+             xmlns:converters="clr-namespace:McDonaldsPOS.UI.Converters"
              mc:Ignorable="d"
-             d:DesignHeight="800" d:DesignWidth="1400"
-             d:DataContext="{d:DesignInstance Type=vm:POSViewModel}"
-             Background="{StaticResource DarkBackground}">
+             x:Class="McDonaldsPOS.UI.Views.POSView"
+             x:DataType="vm:POSViewModel"
+             Background="#1E1E1E">
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MinWidth="500"/>
-            <ColumnDefinition Width="380"/>
-        </Grid.ColumnDefinitions>
+    <UserControl.Resources>
+        <converters:HexColorToBrushConverter x:Key="HexToBrush"/>
+        <converters:CurrencyConverter x:Key="Currency"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+        <converters:CountToVisibilityConverter x:Key="CountToVisibility"/>
+        <converters:BoolToSelectionBrushConverter x:Key="BoolToSelectionBrush"/>
+        <converters:PinToMaskConverter x:Key="PinToMask"/>
+    </UserControl.Resources>
 
+    <Grid ColumnDefinitions="*,380">
         <!-- Left Panel: Categories + Menu Items -->
-        <Grid Grid.Column="0" Margin="8">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
+        <Grid Grid.Column="0" RowDefinitions="Auto,*" Margin="8">
             <!-- Category Buttons -->
             <ScrollViewer Grid.Row="0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
                 <ItemsControl ItemsSource="{Binding Categories}">
@@ -33,15 +31,13 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Style="{StaticResource CategoryButton}"
-                                   Command="{Binding DataContext.SelectCategoryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            <Button Classes="category"
+                                   Command="{Binding $parent[UserControl].((vm:POSViewModel)DataContext).SelectCategoryCommand}"
                                    CommandParameter="{Binding}"
                                    Background="{Binding Color, Converter={StaticResource HexToBrush}}">
-                                <Button.Content>
-                                    <TextBlock Text="{Binding Name}"
-                                              TextWrapping="Wrap"
-                                              TextAlignment="Center"/>
-                                </Button.Content>
+                                <TextBlock Text="{Binding Name}"
+                                          TextWrapping="Wrap"
+                                          TextAlignment="Center"/>
                             </Button>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -58,8 +54,8 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Style="{StaticResource MenuItemCard}"
-                                   Command="{Binding DataContext.SelectMenuItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            <Button Classes="menu-item"
+                                   Command="{Binding $parent[UserControl].((vm:POSViewModel)DataContext).SelectMenuItemCommand}"
                                    CommandParameter="{Binding}"
                                    Background="{Binding BackgroundColor, Converter={StaticResource HexToBrush}}">
                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -83,43 +79,33 @@
             <!-- Loading Overlay -->
             <Border Grid.Row="1"
                    Background="#80000000"
-                   Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}">
-                <ProgressBar IsIndeterminate="True" Width="200"/>
+                   IsVisible="{Binding IsLoading}">
+                <ProgressBar IsIndeterminate="True" Width="200" VerticalAlignment="Center"/>
             </Border>
         </Grid>
 
         <!-- Right Panel: Order -->
-        <Border Grid.Column="1" Background="{StaticResource CardBackground}" CornerRadius="12,0,0,12" Margin="0,8,8,8">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
+        <Border Grid.Column="1" Background="#2D2D2D" CornerRadius="12,0,0,12" Margin="0,8,8,8">
+            <Grid RowDefinitions="Auto,*,Auto,Auto">
                 <!-- Order Header -->
-                <Border Grid.Row="0" Background="#1A1A1A" Padding="16">
+                <Border Grid.Row="0" Background="#1A1A1A" Padding="16" CornerRadius="12,0,0,0">
                     <Grid>
                         <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Cart" Width="24" Height="24"
-                                                    Foreground="{StaticResource McDonaldsYellow}"
-                                                    VerticalAlignment="Center"/>
+                            <TextBlock Text="🛒" FontSize="20" VerticalAlignment="Center"/>
                             <TextBlock Text="Current Order"
                                       FontSize="18" FontWeight="Bold"
                                       Foreground="White"
                                       VerticalAlignment="Center"
                                       Margin="8,0,0,0"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Border Background="{StaticResource McDonaldsRed}"
-                                   CornerRadius="12"
-                                   Padding="12,4"
-                                   Visibility="{Binding ItemCount, Converter={StaticResource CountToVisibility}}">
-                                <TextBlock Text="{Binding ItemCount, StringFormat={}{0} items}"
-                                          FontSize="12" FontWeight="Bold" Foreground="White"/>
-                            </Border>
-                        </StackPanel>
+                        <Border Background="#DA291C"
+                               CornerRadius="12"
+                               Padding="12,4"
+                               HorizontalAlignment="Right"
+                               IsVisible="{Binding ItemCount, Converter={StaticResource CountToVisibility}}">
+                            <TextBlock Text="{Binding ItemCount, StringFormat={}{0} items}"
+                                      FontSize="12" FontWeight="Bold" Foreground="White"/>
+                        </Border>
                     </Grid>
                 </Border>
 
@@ -128,28 +114,18 @@
                     <ItemsControl ItemsSource="{Binding OrderItems}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Style="{StaticResource OrderItemCard}">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-
+                                <Border Classes="order-item">
+                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
                                         <!-- Item Name & Combo Badge -->
                                         <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
                                             <TextBlock Text="{Binding DisplayName}"
                                                       FontSize="15" FontWeight="SemiBold"
                                                       Foreground="White"/>
-                                            <Border Background="{StaticResource McDonaldsYellow}"
+                                            <Border Background="#FFC72C"
                                                    CornerRadius="4"
                                                    Padding="6,2"
                                                    Margin="8,0,0,0"
-                                                   Visibility="{Binding IsCombo, Converter={StaticResource BoolToVisibility}}">
+                                                   IsVisible="{Binding IsCombo}">
                                                 <TextBlock Text="MEAL" FontSize="10" FontWeight="Bold" Foreground="Black"/>
                                             </Border>
                                         </StackPanel>
@@ -158,14 +134,14 @@
                                         <TextBlock Grid.Column="1" Grid.Row="0"
                                                   Text="{Binding Price}"
                                                   FontSize="15" FontWeight="Bold"
-                                                  Foreground="{StaticResource McDonaldsYellow}"/>
+                                                  Foreground="#FFC72C"/>
 
                                         <!-- Modifiers -->
                                         <TextBlock Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
                                                   Text="{Binding Modifiers}"
                                                   FontSize="12"
                                                   Foreground="#FFA726"
-                                                  Visibility="{Binding HasModifiers, Converter={StaticResource BoolToVisibility}}"
+                                                  IsVisible="{Binding HasModifiers}"
                                                   Margin="0,4,0,0"/>
 
                                         <!-- Action Buttons -->
@@ -173,53 +149,38 @@
                                                    Orientation="Horizontal"
                                                    Margin="0,8,0,0">
                                             <!-- Quantity Controls -->
-                                            <Button Style="{StaticResource MaterialDesignIconButton}"
-                                                   Width="36" Height="36"
-                                                   Command="{Binding DataContext.DecreaseQuantityCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            <Button Width="36" Height="36" Padding="0"
+                                                   Command="{Binding $parent[UserControl].((vm:POSViewModel)DataContext).DecreaseQuantityCommand}"
                                                    CommandParameter="{Binding}">
-                                                <materialDesign:PackIcon Kind="Minus" Width="20" Height="20"/>
+                                                <TextBlock Text="−" FontSize="20"/>
                                             </Button>
                                             <Border Background="#404040" CornerRadius="4" Padding="12,4" Margin="4,0">
                                                 <TextBlock Text="{Binding Quantity}"
                                                           FontSize="16" FontWeight="Bold"
                                                           Foreground="White"/>
                                             </Border>
-                                            <Button Style="{StaticResource MaterialDesignIconButton}"
-                                                   Width="36" Height="36"
-                                                   Command="{Binding DataContext.IncreaseQuantityCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            <Button Width="36" Height="36" Padding="0"
+                                                   Command="{Binding $parent[UserControl].((vm:POSViewModel)DataContext).IncreaseQuantityCommand}"
                                                    CommandParameter="{Binding}">
-                                                <materialDesign:PackIcon Kind="Plus" Width="20" Height="20"/>
+                                                <TextBlock Text="+" FontSize="20"/>
                                             </Button>
 
                                             <!-- Modifiers Button -->
-                                            <Button Style="{StaticResource MaterialDesignIconButton}"
-                                                   Width="36" Height="36"
-                                                   Margin="8,0,0,0"
-                                                   Command="{Binding DataContext.OpenModifiersCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            <Button Width="36" Height="36" Margin="8,0,0,0" Padding="0"
+                                                   Command="{Binding $parent[UserControl].((vm:POSViewModel)DataContext).OpenModifiersCommand}"
                                                    CommandParameter="{Binding}"
-                                                   Visibility="{Binding CanModify, Converter={StaticResource BoolToVisibility}}"
-                                                   ToolTip="Modifiers">
-                                                <materialDesign:PackIcon Kind="TuneVertical" Width="20" Height="20"/>
-                                            </Button>
-
-                                            <!-- Void Button -->
-                                            <Button Style="{StaticResource MaterialDesignIconButton}"
-                                                   Width="36" Height="36"
-                                                   Foreground="{StaticResource McDonaldsRed}"
-                                                   Command="{Binding DataContext.OpenVoidDialogCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                   CommandParameter="{Binding}"
-                                                   ToolTip="Void Item">
-                                                <materialDesign:PackIcon Kind="DeleteOutline" Width="20" Height="20"/>
+                                                   IsVisible="{Binding CanModify}"
+                                                   ToolTip.Tip="Modifiers">
+                                                <TextBlock Text="⚙" FontSize="16"/>
                                             </Button>
 
                                             <!-- Remove Button -->
-                                            <Button Style="{StaticResource MaterialDesignIconButton}"
-                                                   Width="36" Height="36"
+                                            <Button Width="36" Height="36" Padding="0"
                                                    Foreground="Gray"
-                                                   Command="{Binding DataContext.RemoveOrderItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                   Command="{Binding $parent[UserControl].((vm:POSViewModel)DataContext).RemoveOrderItemCommand}"
                                                    CommandParameter="{Binding}"
-                                                   ToolTip="Remove">
-                                                <materialDesign:PackIcon Kind="Close" Width="20" Height="20"/>
+                                                   ToolTip.Tip="Remove">
+                                                <TextBlock Text="✕" FontSize="16"/>
                                             </Button>
                                         </StackPanel>
                                     </Grid>
@@ -233,11 +194,8 @@
                 <StackPanel Grid.Row="1"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
-                           Visibility="{Binding ItemCount, Converter={StaticResource CountToVisibility}, ConverterParameter=Inverse}">
-                    <materialDesign:PackIcon Kind="CartOutline"
-                                            Width="64" Height="64"
-                                            Foreground="Gray"
-                                            HorizontalAlignment="Center"/>
+                           IsVisible="{Binding !ItemCount, Converter={StaticResource CountToVisibility}, ConverterParameter=Inverse}">
+                    <TextBlock Text="🛒" FontSize="48" HorizontalAlignment="Center" Opacity="0.5"/>
                     <TextBlock Text="No items in order"
                               FontSize="16"
                               Foreground="Gray"
@@ -269,7 +227,7 @@
                             <TextBlock Text="TOTAL" FontSize="20" FontWeight="Bold" Foreground="White"/>
                             <TextBlock Text="{Binding Total, Converter={StaticResource Currency}}"
                                       FontSize="24" FontWeight="Bold"
-                                      Foreground="{StaticResource McDonaldsYellow}"
+                                      Foreground="#FFC72C"
                                       HorizontalAlignment="Right"/>
                         </Grid>
                     </StackPanel>
@@ -277,25 +235,23 @@
 
                 <!-- Action Buttons -->
                 <StackPanel Grid.Row="3" Margin="8">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                    <Grid ColumnDefinitions="*,*">
                         <Button Grid.Column="0"
-                               Style="{StaticResource ActionButtonSecondary}"
+                               Classes="action-secondary"
                                Content="SEND TO KITCHEN"
                                Command="{Binding SendToKitchenCommand}"/>
                         <Button Grid.Column="1"
-                               Style="{StaticResource ActionButtonPrimary}"
+                               Classes="action-primary"
                                Content="PAY NOW"
                                Command="{Binding OpenPaymentCommand}"/>
                     </Grid>
-                    <Button Style="{StaticResource MaterialDesignOutlinedButton}"
-                           Content="CLEAR ORDER"
+                    <Button Content="CLEAR ORDER"
+                           Background="Transparent"
                            Foreground="Gray"
                            BorderBrush="Gray"
+                           BorderThickness="1"
                            Height="40"
+                           CornerRadius="8"
                            Margin="4,8,4,4"
                            Command="{Binding ClearOrderCommand}"/>
                 </StackPanel>
@@ -307,13 +263,13 @@
         <!-- Size Selection Dialog -->
         <Border Grid.ColumnSpan="2"
                Background="#CC000000"
-               Visibility="{Binding ShowSizeDialog, Converter={StaticResource BoolToVisibility}}">
-            <materialDesign:Card Background="{StaticResource CardBackground}"
-                                UniformCornerRadius="16"
-                                Padding="32"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Width="400">
+               IsVisible="{Binding ShowSizeDialog}">
+            <Border Background="#2D2D2D"
+                   CornerRadius="16"
+                   Padding="32"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Width="400">
                 <StackPanel>
                     <TextBlock Text="Select Size"
                               FontSize="24" FontWeight="Bold"
@@ -321,49 +277,38 @@
                               HorizontalAlignment="Center"
                               Margin="0,0,0,24"/>
 
-                    <Button Style="{StaticResource LargeTouchButton}"
-                           Content="SMALL"
-                           Background="#4CAF50"
-                           Command="{Binding SelectSizeCommand}"
-                           CommandParameter="Small"/>
-                    <Button Style="{StaticResource LargeTouchButton}"
-                           Content="MEDIUM"
-                           Background="{StaticResource McDonaldsYellow}"
-                           Foreground="Black"
-                           Command="{Binding SelectSizeCommand}"
-                           CommandParameter="Medium"/>
-                    <Button Style="{StaticResource LargeTouchButton}"
-                           Content="LARGE"
-                           Background="{StaticResource McDonaldsRed}"
-                           Command="{Binding SelectSizeCommand}"
-                           CommandParameter="Large"/>
+                    <Button Classes="touch-large" Background="#4CAF50" Foreground="White"
+                           Content="SMALL" HorizontalAlignment="Stretch"
+                           Command="{Binding SelectSizeCommand}" CommandParameter="Small"/>
+                    <Button Classes="touch-large" Background="#FFC72C" Foreground="Black"
+                           Content="MEDIUM" HorizontalAlignment="Stretch"
+                           Command="{Binding SelectSizeCommand}" CommandParameter="Medium"/>
+                    <Button Classes="touch-large" Background="#DA291C" Foreground="White"
+                           Content="LARGE" HorizontalAlignment="Stretch"
+                           Command="{Binding SelectSizeCommand}" CommandParameter="Large"/>
 
-                    <Button Style="{StaticResource MaterialDesignOutlinedButton}"
-                           Content="CANCEL"
-                           Foreground="Gray"
-                           BorderBrush="Gray"
-                           Height="48"
+                    <Button Content="CANCEL"
+                           Background="Transparent" Foreground="Gray"
+                           BorderBrush="Gray" BorderThickness="1"
+                           Height="48" CornerRadius="8"
                            Margin="0,16,0,0"
                            Command="{Binding CancelSizeDialogCommand}"/>
                 </StackPanel>
-            </materialDesign:Card>
+            </Border>
         </Border>
 
         <!-- Combo Prompt Dialog -->
         <Border Grid.ColumnSpan="2"
                Background="#CC000000"
-               Visibility="{Binding ShowComboPrompt, Converter={StaticResource BoolToVisibility}}">
-            <materialDesign:Card Background="{StaticResource CardBackground}"
-                                UniformCornerRadius="16"
-                                Padding="32"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Width="450">
+               IsVisible="{Binding ShowComboPrompt}">
+            <Border Background="#2D2D2D"
+                   CornerRadius="16"
+                   Padding="32"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Width="450">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="Food"
-                                            Width="64" Height="64"
-                                            Foreground="{StaticResource McDonaldsYellow}"
-                                            HorizontalAlignment="Center"/>
+                    <TextBlock Text="🍟🥤" FontSize="48" HorizontalAlignment="Center"/>
                     <TextBlock Text="Make it a Meal?"
                               FontSize="28" FontWeight="Bold"
                               Foreground="White"
@@ -375,45 +320,33 @@
                               HorizontalAlignment="Center"
                               Margin="0,0,0,24"/>
 
-                    <Button Style="{StaticResource ActionButtonSecondary}"
-                           Height="70"
-                           FontSize="20"
-                           Command="{Binding MakeItAMealCommand}">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Check" Width="28" Height="28" Margin="0,0,8,0"/>
-                            <TextBlock Text="YES, MAKE IT A MEAL" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
+                    <Button Classes="action-secondary"
+                           Height="70" FontSize="20"
+                           Content="✓ YES, MAKE IT A MEAL"
+                           Command="{Binding MakeItAMealCommand}"/>
 
-                    <Button Style="{StaticResource MaterialDesignOutlinedButton}"
-                           Content="NO THANKS"
-                           Foreground="Gray"
-                           BorderBrush="Gray"
-                           Height="50"
+                    <Button Content="NO THANKS"
+                           Background="Transparent" Foreground="Gray"
+                           BorderBrush="Gray" BorderThickness="1"
+                           Height="50" CornerRadius="8"
                            Margin="0,12,0,0"
                            Command="{Binding NoMealCommand}"/>
                 </StackPanel>
-            </materialDesign:Card>
+            </Border>
         </Border>
 
         <!-- Modifiers Dialog -->
         <Border Grid.ColumnSpan="2"
                Background="#CC000000"
-               Visibility="{Binding ShowModifierDialog, Converter={StaticResource BoolToVisibility}}">
-            <materialDesign:Card Background="{StaticResource CardBackground}"
-                                UniformCornerRadius="16"
-                                Padding="24"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Width="500"
-                                MaxHeight="600">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-
+               IsVisible="{Binding ShowModifierDialog}">
+            <Border Background="#2D2D2D"
+                   CornerRadius="16"
+                   Padding="24"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Width="500"
+                   MaxHeight="600">
+                <Grid RowDefinitions="Auto,*,Auto">
                     <StackPanel Grid.Row="0">
                         <TextBlock Text="Customize Item"
                                   FontSize="24" FontWeight="Bold"
@@ -421,7 +354,7 @@
                                   HorizontalAlignment="Center"/>
                         <TextBlock Text="{Binding ModifierTargetItem.DisplayName}"
                                   FontSize="16"
-                                  Foreground="{StaticResource McDonaldsYellow}"
+                                  Foreground="#FFC72C"
                                   HorizontalAlignment="Center"
                                   Margin="0,8,0,16"/>
                     </StackPanel>
@@ -430,27 +363,22 @@
                         <ItemsControl ItemsSource="{Binding AvailableModifiers}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Button Margin="4"
-                                           Height="56"
+                                    <Button Margin="4" Height="56"
                                            HorizontalContentAlignment="Stretch"
                                            Background="{Binding IsSelected, Converter={StaticResource BoolToSelectionBrush}}"
-                                           Command="{Binding DataContext.ToggleModifierCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                           Command="{Binding $parent[UserControl].((vm:POSViewModel)DataContext).ToggleModifierCommand}"
                                            CommandParameter="{Binding}">
                                         <Grid Margin="8,0">
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                <materialDesign:PackIcon Kind="Check"
-                                                                        Width="24" Height="24"
-                                                                        Foreground="White"
-                                                                        Visibility="{Binding IsSelected, Converter={StaticResource BoolToVisibility}}"/>
+                                                <TextBlock Text="✓" FontSize="18" Foreground="White"
+                                                          IsVisible="{Binding IsSelected}" Margin="0,0,8,0"/>
                                                 <TextBlock Text="{Binding Name}"
-                                                          FontSize="16"
-                                                          Foreground="White"
-                                                          VerticalAlignment="Center"
-                                                          Margin="8,0,0,0"/>
+                                                          FontSize="16" Foreground="White"
+                                                          VerticalAlignment="Center"/>
                                             </StackPanel>
                                             <TextBlock Text="{Binding PriceDisplay}"
                                                       FontSize="14" FontWeight="Bold"
-                                                      Foreground="{StaticResource McDonaldsYellow}"
+                                                      Foreground="#FFC72C"
                                                       HorizontalAlignment="Right"
                                                       VerticalAlignment="Center"/>
                                         </Grid>
@@ -461,94 +389,24 @@
                     </ScrollViewer>
 
                     <Button Grid.Row="2"
-                           Style="{StaticResource ActionButtonPrimary}"
+                           Classes="action-primary"
                            Content="DONE"
                            Margin="0,16,0,0"
                            Command="{Binding CloseModifiersCommand}"/>
                 </Grid>
-            </materialDesign:Card>
-        </Border>
-
-        <!-- Void Dialog -->
-        <Border Grid.ColumnSpan="2"
-               Background="#CC000000"
-               Visibility="{Binding ShowVoidDialog, Converter={StaticResource BoolToVisibility}}">
-            <materialDesign:Card Background="{StaticResource CardBackground}"
-                                UniformCornerRadius="16"
-                                Padding="32"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Width="400">
-                <StackPanel>
-                    <materialDesign:PackIcon Kind="AlertCircle"
-                                            Width="48" Height="48"
-                                            Foreground="{StaticResource McDonaldsRed}"
-                                            HorizontalAlignment="Center"/>
-                    <TextBlock Text="Void Item"
-                              FontSize="24" FontWeight="Bold"
-                              Foreground="White"
-                              HorizontalAlignment="Center"
-                              Margin="0,16,0,8"/>
-                    <TextBlock Text="Manager PIN Required"
-                              FontSize="14"
-                              Foreground="Gray"
-                              HorizontalAlignment="Center"
-                              Margin="0,0,0,24"/>
-
-                    <!-- PIN Display -->
-                    <Border Background="#1A1A1A"
-                           CornerRadius="8"
-                           Height="50"
-                           Margin="0,0,0,16">
-                        <TextBlock Text="{Binding VoidPin, Converter={StaticResource PinToMask}}"
-                                  FontSize="28"
-                                  FontWeight="Bold"
-                                  Foreground="White"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"/>
-                    </Border>
-
-                    <!-- PIN Pad -->
-                    <UniformGrid Columns="3" Rows="4" HorizontalAlignment="Center">
-                        <Button Content="1" Style="{StaticResource PinPadButton}" Width="60" Height="60" Command="{Binding AppendVoidPinCommand}" CommandParameter="1"/>
-                        <Button Content="2" Style="{StaticResource PinPadButton}" Width="60" Height="60" Command="{Binding AppendVoidPinCommand}" CommandParameter="2"/>
-                        <Button Content="3" Style="{StaticResource PinPadButton}" Width="60" Height="60" Command="{Binding AppendVoidPinCommand}" CommandParameter="3"/>
-                        <Button Content="4" Style="{StaticResource PinPadButton}" Width="60" Height="60" Command="{Binding AppendVoidPinCommand}" CommandParameter="4"/>
-                        <Button Content="5" Style="{StaticResource PinPadButton}" Width="60" Height="60" Command="{Binding AppendVoidPinCommand}" CommandParameter="5"/>
-                        <Button Content="6" Style="{StaticResource PinPadButton}" Width="60" Height="60" Command="{Binding AppendVoidPinCommand}" CommandParameter="6"/>
-                        <Button Content="7" Style="{StaticResource PinPadButton}" Width="60" Height="60" Command="{Binding AppendVoidPinCommand}" CommandParameter="7"/>
-                        <Button Content="8" Style="{StaticResource PinPadButton}" Width="60" Height="60" Command="{Binding AppendVoidPinCommand}" CommandParameter="8"/>
-                        <Button Content="9" Style="{StaticResource PinPadButton}" Width="60" Height="60" Command="{Binding AppendVoidPinCommand}" CommandParameter="9"/>
-                        <Button Style="{StaticResource PinPadButton}" Width="60" Height="60" Command="{Binding ClearVoidPinCommand}" Background="{StaticResource McDonaldsRed}">
-                            <materialDesign:PackIcon Kind="Close" Width="20" Height="20"/>
-                        </Button>
-                        <Button Content="0" Style="{StaticResource PinPadButton}" Width="60" Height="60" Command="{Binding AppendVoidPinCommand}" CommandParameter="0"/>
-                        <Button Style="{StaticResource PinPadButton}" Width="60" Height="60" Command="{Binding ConfirmVoidCommand}" Background="#4CAF50">
-                            <materialDesign:PackIcon Kind="Check" Width="20" Height="20"/>
-                        </Button>
-                    </UniformGrid>
-
-                    <Button Style="{StaticResource MaterialDesignOutlinedButton}"
-                           Content="CANCEL"
-                           Foreground="Gray"
-                           BorderBrush="Gray"
-                           Height="44"
-                           Margin="0,16,0,0"
-                           Command="{Binding CancelVoidCommand}"/>
-                </StackPanel>
-            </materialDesign:Card>
+            </Border>
         </Border>
 
         <!-- Payment Dialog -->
         <Border Grid.ColumnSpan="2"
                Background="#CC000000"
-               Visibility="{Binding ShowPaymentDialog, Converter={StaticResource BoolToVisibility}}">
-            <materialDesign:Card Background="{StaticResource CardBackground}"
-                                UniformCornerRadius="16"
-                                Padding="32"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Width="500">
+               IsVisible="{Binding ShowPaymentDialog}">
+            <Border Background="#2D2D2D"
+                   CornerRadius="16"
+                   Padding="32"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Width="500">
                 <StackPanel>
                     <TextBlock Text="Payment"
                               FontSize="28" FontWeight="Bold"
@@ -562,33 +420,24 @@
                             <TextBlock Text="Total Due" FontSize="16" Foreground="Gray" HorizontalAlignment="Center"/>
                             <TextBlock Text="{Binding Total, Converter={StaticResource Currency}}"
                                       FontSize="48" FontWeight="Bold"
-                                      Foreground="{StaticResource McDonaldsYellow}"
+                                      Foreground="#FFC72C"
                                       HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
 
                     <!-- Payment Methods -->
-                    <Grid Margin="0,8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
+                    <Grid ColumnDefinitions="*,*" Margin="0,8">
                         <Button Grid.Column="0"
-                               Style="{StaticResource ActionButtonSecondary}"
+                               Classes="action-secondary"
                                Height="80"
                                Command="{Binding PayCardCommand}">
                             <StackPanel>
-                                <materialDesign:PackIcon Kind="CreditCard" Width="32" Height="32"/>
+                                <TextBlock Text="💳" FontSize="28"/>
                                 <TextBlock Text="CARD" FontWeight="Bold" Margin="0,4,0,0"/>
                             </StackPanel>
                         </Button>
 
-                        <materialDesign:Card Grid.Column="1"
-                                            Background="#404040"
-                                            UniformCornerRadius="8"
-                                            Margin="4"
-                                            Padding="8">
+                        <Border Grid.Column="1" Background="#404040" CornerRadius="8" Margin="4" Padding="8">
                             <StackPanel>
                                 <TextBlock Text="CASH" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,8"/>
 
@@ -610,7 +459,7 @@
 
                                 <!-- Change Display -->
                                 <Border Background="#4CAF50" CornerRadius="4" Padding="8" Margin="0,8,0,0"
-                                       Visibility="{Binding ChangeAmount, Converter={StaticResource CountToVisibility}}">
+                                       IsVisible="{Binding ChangeAmount, Converter={StaticResource CountToVisibility}}">
                                     <StackPanel>
                                         <TextBlock Text="Change" FontSize="12" Foreground="White" HorizontalAlignment="Center"/>
                                         <TextBlock Text="{Binding ChangeAmount, Converter={StaticResource Currency}}"
@@ -620,36 +469,35 @@
                                     </StackPanel>
                                 </Border>
 
-                                <Button Style="{StaticResource ActionButtonPrimary}"
+                                <Button Classes="action-primary"
                                        Content="PAY CASH"
                                        Height="44"
                                        Margin="0,8,0,0"
                                        Command="{Binding PayCashCommand}"/>
                             </StackPanel>
-                        </materialDesign:Card>
+                        </Border>
                     </Grid>
 
-                    <Button Style="{StaticResource MaterialDesignOutlinedButton}"
-                           Content="CANCEL"
-                           Foreground="Gray"
-                           BorderBrush="Gray"
-                           Height="44"
+                    <Button Content="CANCEL"
+                           Background="Transparent" Foreground="Gray"
+                           BorderBrush="Gray" BorderThickness="1"
+                           Height="44" CornerRadius="8"
                            Margin="0,16,0,0"
                            Command="{Binding CancelPaymentCommand}"/>
                 </StackPanel>
-            </materialDesign:Card>
+            </Border>
         </Border>
 
         <!-- Receipt Dialog -->
         <Border Grid.ColumnSpan="2"
                Background="#CC000000"
-               Visibility="{Binding ShowReceiptDialog, Converter={StaticResource BoolToVisibility}}">
-            <materialDesign:Card Background="White"
-                                UniformCornerRadius="8"
-                                Padding="24"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Width="350">
+               IsVisible="{Binding ShowReceiptDialog}">
+            <Border Background="White"
+                   CornerRadius="8"
+                   Padding="24"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Width="350">
                 <StackPanel>
                     <!-- Receipt Header -->
                     <TextBlock Text="McDonald's"
@@ -720,32 +568,17 @@
 
                     <Separator Background="LightGray" Margin="0,8"/>
 
-                    <!-- Payment Info -->
-                    <Grid Margin="0,4">
-                        <TextBlock Text="Payment Method" Foreground="Gray"/>
-                        <TextBlock Text="{Binding CompletedOrder.PaymentMethod}"
-                                  HorizontalAlignment="Right" Foreground="Black"/>
-                    </Grid>
-                    <Grid Margin="0,4" Visibility="{Binding CompletedOrder.ChangeGiven, Converter={StaticResource CountToVisibility}}">
-                        <TextBlock Text="Change" Foreground="Gray"/>
-                        <TextBlock Text="{Binding CompletedOrder.ChangeGiven, StringFormat=${0:F2}}"
-                                  HorizontalAlignment="Right" Foreground="Black"/>
-                    </Grid>
-
-                    <Separator Background="LightGray" Margin="0,16,0,8"/>
-
                     <TextBlock Text="{Binding CompletedOrder.PaidAt, StringFormat={}{0:MM/dd/yyyy h:mm tt}}"
                               FontSize="12"
                               Foreground="Gray"
                               HorizontalAlignment="Center"/>
 
-                    <Button Style="{StaticResource ActionButtonSecondary}"
+                    <Button Classes="action-secondary"
                            Content="NEW ORDER"
-                           Foreground="Black"
                            Margin="0,16,0,0"
                            Command="{Binding CloseReceiptCommand}"/>
                 </StackPanel>
-            </materialDesign:Card>
+            </Border>
         </Border>
     </Grid>
 </UserControl>

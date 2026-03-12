@@ -1,4 +1,6 @@
-using System.Windows;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Markup.Xaml;
 using McDonaldsPOS.Data;
 using McDonaldsPOS.Data.Repositories;
 using McDonaldsPOS.Services;
@@ -9,76 +11,67 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace McDonaldsPOS.UI;
 
-/// <summary>
-/// Application entry point with DI configuration
-/// </summary>
 public partial class App : Application
 {
-    private readonly ServiceProvider _serviceProvider;
-
+    private ServiceProvider? _serviceProvider;
     public static ServiceProvider Services { get; private set; } = null!;
 
-    public App()
+    public override void Initialize()
+    {
+        AvaloniaXamlLoader.Load(this);
+    }
+
+    public override async void OnFrameworkInitializationCompleted()
     {
         var services = new ServiceCollection();
         ConfigureServices(services);
         _serviceProvider = services.BuildServiceProvider();
         Services = _serviceProvider;
+
+        // Initialize database
+        var context = _serviceProvider.GetRequiredService<AppDbContext>();
+        await DbInitializer.InitializeAsync(context);
+
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            var mainWindow = new MainWindow
+            {
+                DataContext = _serviceProvider.GetRequiredService<MainViewModel>()
+            };
+            desktop.MainWindow = mainWindow;
+        }
+
+        base.OnFrameworkInitializationCompleted();
     }
 
     private void ConfigureServices(IServiceCollection services)
     {
-        // Database - use a single DbContext instance for the app
+        // Database
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlite("Data Source=mcdonalds_pos.db"),
             ServiceLifetime.Singleton);
 
-        // Repositories - singleton to share with singleton services
+        // Repositories
         services.AddSingleton<IUserRepository, UserRepository>();
         services.AddSingleton<IMenuRepository, MenuRepository>();
         services.AddSingleton<IOrderRepository, OrderRepository>();
 
-        // Services - singleton for state management
+        // Services
         services.AddSingleton<IAuthService, AuthService>();
         services.AddSingleton<IMenuService, MenuService>();
         services.AddSingleton<IOrderService, OrderService>();
 
-        // ViewModels - singleton for state persistence
+        // ViewModels
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<LoginViewModel>();
         services.AddSingleton<POSViewModel>();
         services.AddSingleton<KDSViewModel>();
-
-        // Views
-        services.AddSingleton<MainWindow>();
-        services.AddTransient<KDSWindow>();
     }
 
-    protected override async void OnStartup(StartupEventArgs e)
-    {
-        base.OnStartup(e);
-
-        // Initialize and seed database
-        var context = _serviceProvider.GetRequiredService<AppDbContext>();
-        await DbInitializer.InitializeAsync(context);
-
-        // Show main window
-        var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
-        mainWindow.DataContext = _serviceProvider.GetRequiredService<MainViewModel>();
-        mainWindow.Show();
-    }
-
-    protected override void OnExit(ExitEventArgs e)
-    {
-        _serviceProvider.Dispose();
-        base.OnExit(e);
-    }
-
-    /// <summary>
-    /// Opens the KDS window
-    /// </summary>
     public void OpenKDSWindow()
     {
+        if (_serviceProvider == null) return;
+
         var kdsWindow = new KDSWindow
         {
             DataContext = _serviceProvider.GetRequiredService<KDSViewModel>()

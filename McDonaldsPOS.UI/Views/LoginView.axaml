@@ -1,0 +1,136 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:McDonaldsPOS.UI.ViewModels"
+             xmlns:converters="clr-namespace:McDonaldsPOS.UI.Converters"
+             mc:Ignorable="d"
+             x:Class="McDonaldsPOS.UI.Views.LoginView"
+             x:DataType="vm:LoginViewModel"
+             Background="#1E1E1E">
+
+    <UserControl.Resources>
+        <converters:PinToMaskConverter x:Key="PinToMask"/>
+        <converters:StringNotEmptyConverter x:Key="StringNotEmpty"/>
+        <converters:BoolToStatusBrushConverter x:Key="BoolToStatusBrush"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Login Card -->
+        <Border Grid.Column="1"
+                Background="#2D2D2D"
+                CornerRadius="16"
+                Padding="48"
+                VerticalAlignment="Center">
+            <StackPanel Width="400">
+                <!-- Header -->
+                <StackPanel HorizontalAlignment="Center" Margin="0,0,0,32">
+                    <TextBlock Text="🍔🍟🥤"
+                              FontSize="48"
+                              HorizontalAlignment="Center"/>
+                    <TextBlock Text="McDonald's POS"
+                              FontSize="28" FontWeight="Bold"
+                              Foreground="#FFC72C"
+                              HorizontalAlignment="Center"
+                              Margin="0,16,0,0"/>
+                    <TextBlock Text="Crew Sign In"
+                              FontSize="16"
+                              Foreground="Gray"
+                              HorizontalAlignment="Center"
+                              Margin="0,8,0,0"/>
+                </StackPanel>
+
+                <!-- User Selection -->
+                <TextBlock Text="Select User" FontSize="14" Foreground="Gray" Margin="0,0,0,8"/>
+                <ListBox ItemsSource="{Binding Users}"
+                        SelectedItem="{Binding SelectedUser}"
+                        Background="Transparent"
+                        MaxHeight="200"
+                        Margin="0,0,0,24">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="#3D3D3D"
+                                   CornerRadius="8"
+                                   Padding="16,12"
+                                   Margin="2">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="👤"
+                                              FontSize="20"
+                                              VerticalAlignment="Center"/>
+                                    <StackPanel Margin="12,0,0,0">
+                                        <TextBlock Text="{Binding DisplayName}"
+                                                  FontSize="16" FontWeight="SemiBold"
+                                                  Foreground="White"/>
+                                        <TextBlock Text="{Binding Role}"
+                                                  FontSize="12" Foreground="Gray"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <!-- PIN Display -->
+                <Border Background="#1A1A1A"
+                       CornerRadius="8"
+                       Height="60"
+                       Margin="0,0,0,16">
+                    <Panel>
+                        <TextBlock Text="Enter 4-digit PIN"
+                                  FontSize="20"
+                                  Foreground="Gray"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  IsVisible="{Binding Pin, Converter={StaticResource StringNotEmpty}, ConverterParameter=Inverse}"/>
+                        <TextBlock Text="{Binding Pin, Converter={StaticResource PinToMask}}"
+                                  FontSize="36"
+                                  FontWeight="Bold"
+                                  Foreground="White"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+                    </Panel>
+                </Border>
+
+                <!-- PIN Pad -->
+                <UniformGrid Columns="3" Rows="4" HorizontalAlignment="Center">
+                    <Button Content="1" Classes="pin-pad" Command="{Binding AppendPinCommand}" CommandParameter="1"/>
+                    <Button Content="2" Classes="pin-pad" Command="{Binding AppendPinCommand}" CommandParameter="2"/>
+                    <Button Content="3" Classes="pin-pad" Command="{Binding AppendPinCommand}" CommandParameter="3"/>
+                    <Button Content="4" Classes="pin-pad" Command="{Binding AppendPinCommand}" CommandParameter="4"/>
+                    <Button Content="5" Classes="pin-pad" Command="{Binding AppendPinCommand}" CommandParameter="5"/>
+                    <Button Content="6" Classes="pin-pad" Command="{Binding AppendPinCommand}" CommandParameter="6"/>
+                    <Button Content="7" Classes="pin-pad" Command="{Binding AppendPinCommand}" CommandParameter="7"/>
+                    <Button Content="8" Classes="pin-pad" Command="{Binding AppendPinCommand}" CommandParameter="8"/>
+                    <Button Content="9" Classes="pin-pad" Command="{Binding AppendPinCommand}" CommandParameter="9"/>
+                    <Button Content="✕" Classes="pin-pad" Background="#DA291C" Command="{Binding ClearPinCommand}"/>
+                    <Button Content="0" Classes="pin-pad" Command="{Binding AppendPinCommand}" CommandParameter="0"/>
+                    <Button Content="⌫" Classes="pin-pad" Command="{Binding BackspacePinCommand}"/>
+                </UniformGrid>
+
+                <!-- Status Message -->
+                <Border Background="{Binding IsStatusError, Converter={StaticResource BoolToStatusBrush}}"
+                       CornerRadius="8"
+                       Padding="16"
+                       Margin="0,24,0,0">
+                    <TextBlock Text="{Binding StatusMessage}"
+                              FontSize="14"
+                              Foreground="White"
+                              HorizontalAlignment="Center"
+                              TextWrapping="Wrap"/>
+                </Border>
+
+                <!-- Loading Indicator -->
+                <ProgressBar IsIndeterminate="True"
+                            IsVisible="{Binding IsLoading}"
+                            Margin="0,16,0,0"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

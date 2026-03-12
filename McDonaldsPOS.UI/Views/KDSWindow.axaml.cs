@@ -1,20 +1,19 @@
-using System.ComponentModel;
-using System.Windows;
+using Avalonia.Controls;
 using McDonaldsPOS.UI.ViewModels;
 
 namespace McDonaldsPOS.UI.Views;
 
-/// <summary>
-/// Kitchen Display System window
-/// </summary>
 public partial class KDSWindow : Window
 {
     public KDSWindow()
     {
         InitializeComponent();
+
+        Opened += Window_Opened;
+        Closing += Window_Closing;
     }
 
-    private void Window_Loaded(object sender, RoutedEventArgs e)
+    private void Window_Opened(object? sender, System.EventArgs e)
     {
         if (DataContext is KDSViewModel vm)
         {
@@ -22,7 +21,7 @@ public partial class KDSWindow : Window
         }
     }
 
-    private void Window_Closing(object sender, CancelEventArgs e)
+    private void Window_Closing(object? sender, WindowClosingEventArgs e)
     {
         if (DataContext is KDSViewModel vm)
         {

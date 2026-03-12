@@ -1,0 +1,82 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:McDonaldsPOS.UI.ViewModels"
+        xmlns:views="clr-namespace:McDonaldsPOS.UI.Views"
+        xmlns:converters="clr-namespace:McDonaldsPOS.UI.Converters"
+        mc:Ignorable="d"
+        x:Class="McDonaldsPOS.UI.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="McDonald's POS System"
+        Width="1400" Height="900"
+        MinWidth="1024" MinHeight="768"
+        WindowState="Maximized"
+        Background="#1E1E1E">
+
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+    </Window.Resources>
+
+    <Window.DataTemplates>
+        <DataTemplate DataType="{x:Type vm:LoginViewModel}">
+            <views:LoginView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:POSViewModel}">
+            <views:POSView/>
+        </DataTemplate>
+    </Window.DataTemplates>
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Title Bar -->
+        <Border Grid.Row="0" Background="#1A1A1A" Height="48">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                <!-- Logo/Title -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0">
+                    <TextBlock Text="🍔" FontSize="24" VerticalAlignment="Center"/>
+                    <TextBlock Text="McDonald's POS"
+                              FontSize="18" FontWeight="Bold"
+                              Foreground="#FFC72C"
+                              VerticalAlignment="Center" Margin="8,0,0,0"/>
+                </StackPanel>
+
+                <!-- Current User -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
+                           IsVisible="{Binding IsLoggedIn}"
+                           Margin="16,0">
+                    <TextBlock Text="👤" FontSize="18" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding CurrentUserName}"
+                              Foreground="White" VerticalAlignment="Center"
+                              Margin="8,0,16,0"/>
+                    <Button Content="LOGOUT"
+                           Classes="touch"
+                           Background="Transparent"
+                           Foreground="#DA291C"
+                           Command="{Binding LogoutCommand}"/>
+                    <Button Content="KDS"
+                           Classes="touch"
+                           Background="Transparent"
+                           Foreground="#FFC72C"
+                           Click="OpenKDS_Click"
+                           Margin="8,0"/>
+                </StackPanel>
+
+                <!-- Window Controls -->
+                <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="0,0,8,0">
+                    <Button Content="─" Width="40" Height="32"
+                           Background="Transparent" Foreground="White"
+                           Click="MinimizeButton_Click"/>
+                    <Button Content="□" Width="40" Height="32"
+                           Background="Transparent" Foreground="White"
+                           Click="MaximizeButton_Click"/>
+                    <Button Content="✕" Width="40" Height="32"
+                           Background="Transparent" Foreground="#DA291C"
+                           Click="CloseButton_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <ContentControl Grid.Row="1" Content="{Binding CurrentViewModel}"/>
+    </Grid>
+</Window>

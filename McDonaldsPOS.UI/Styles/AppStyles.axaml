@@ -1,0 +1,112 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- McDonald's Brand Colors -->
+    <Style>
+        <Style.Resources>
+            <SolidColorBrush x:Key="McDonaldsRed" Color="#DA291C"/>
+            <SolidColorBrush x:Key="McDonaldsYellow" Color="#FFC72C"/>
+            <SolidColorBrush x:Key="McDonaldsGold" Color="#FFB81C"/>
+            <SolidColorBrush x:Key="DarkBackground" Color="#1E1E1E"/>
+            <SolidColorBrush x:Key="CardBackground" Color="#2D2D2D"/>
+            <SolidColorBrush x:Key="CardBackgroundHover" Color="#3D3D3D"/>
+            <SolidColorBrush x:Key="SuccessGreen" Color="#4CAF50"/>
+            <SolidColorBrush x:Key="ErrorRed" Color="#D32F2F"/>
+        </Style.Resources>
+    </Style>
+
+    <!-- Touch-Friendly Button Base -->
+    <Style Selector="Button.touch">
+        <Setter Property="Height" Value="60"/>
+        <Setter Property="MinWidth" Value="100"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="Padding" Value="16,8"/>
+        <Setter Property="CornerRadius" Value="8"/>
+    </Style>
+
+    <!-- Large Touch Button -->
+    <Style Selector="Button.touch-large">
+        <Setter Property="Height" Value="80"/>
+        <Setter Property="MinWidth" Value="120"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="Padding" Value="20,12"/>
+        <Setter Property="CornerRadius" Value="12"/>
+    </Style>
+
+    <!-- Category Button -->
+    <Style Selector="Button.category">
+        <Setter Property="Height" Value="70"/>
+        <Setter Property="MinWidth" Value="110"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="CornerRadius" Value="8"/>
+    </Style>
+
+    <!-- Menu Item Card -->
+    <Style Selector="Button.menu-item">
+        <Setter Property="Height" Value="100"/>
+        <Setter Property="Width" Value="140"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="Padding" Value="8"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="CornerRadius" Value="12"/>
+    </Style>
+
+    <!-- PIN Pad Button -->
+    <Style Selector="Button.pin-pad">
+        <Setter Property="Height" Value="70"/>
+        <Setter Property="Width" Value="70"/>
+        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="Background" Value="#2D2D2D"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="CornerRadius" Value="8"/>
+    </Style>
+
+    <!-- Action Button Primary (Red) -->
+    <Style Selector="Button.action-primary">
+        <Setter Property="Height" Value="56"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Background" Value="#DA291C"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="CornerRadius" Value="8"/>
+    </Style>
+
+    <!-- Action Button Secondary (Yellow) -->
+    <Style Selector="Button.action-secondary">
+        <Setter Property="Height" Value="56"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Background" Value="#FFC72C"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="CornerRadius" Value="8"/>
+    </Style>
+
+    <!-- Card Panel -->
+    <Style Selector="Border.card">
+        <Setter Property="Background" Value="#2D2D2D"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="16"/>
+    </Style>
+
+    <!-- Order Item Card -->
+    <Style Selector="Border.order-item">
+        <Setter Property="Background" Value="#2D2D2D"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="Padding" Value="12"/>
+    </Style>
+
+</Styles>

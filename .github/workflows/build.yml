@@ -9,7 +9,18 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            artifact_name: McDonaldsPOS-Linux
+          - os: macos-latest
+            artifact_name: McDonaldsPOS-macOS
+          - os: windows-latest
+            artifact_name: McDonaldsPOS-Windows
+
+    runs-on: ${{ matrix.os }}
 
     steps:
     - name: Checkout code
@@ -32,6 +43,6 @@ jobs:
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: McDonaldsPOS-Windows
+        name: ${{ matrix.artifact_name }}
         path: ./publish/
         retention-days: 30
